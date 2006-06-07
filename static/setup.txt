@@ -1,0 +1,138 @@
+# Include our xml class
+includeLibs.tx_wecapi_xml= EXT:wec_api/class.tx_wecapi_xml.php
+
+plugin.tx_wecapi_xml >
+plugin.tx_wecapi_xml = USER
+plugin.tx_wecapi_xml {
+
+	userFunc = tx_wecapi_xml->main
+	
+	markerArray {
+		channel_title = 
+		channel_link = 
+		channel_description =
+	}
+
+	tag_rendering = CASE
+	
+	tag_rendering {
+		
+		# Key is assigned value of the marker name
+		key = 
+		
+		channel_title  = TEXT
+		channel_title.wrap = <title>|</title>
+		
+		channel_link = TEXT
+		channel_link {
+			wrap = <link>|</link>
+			
+			# You must specify this in your implementation
+			typolink = 
+		}
+		
+		channel_description = TEXT
+		channel_description.wrap = <description>|</description>
+		
+		channel_category = TEXT
+		channel_category.dataWrap =  <category domain="{register:domain}">|</category>
+
+		generator = TEXT
+		generator.value = {$constants.wecapi.xml.rss.generator}
+		
+		gen_date = TEXT
+		gen_date.strftime = %a,  %m-%d-%Y, %h:%M %p %z
+
+		copyright = TEXT
+		copyright.value = {$constants.wec.copyright}
+		
+		# This should be a valid language code. See http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
+		language = TEXT
+		language.value = {$constants.wecapi.xml.rss.language}
+		
+		managing_editor = TEXT
+		managing_edit.value = {$constants.wecapi.xml.rss.managing_editor}
+		
+		webmaster = TEXT
+		webmaster.value = {$constants.wec.adminEmail}
+		
+		ttl = TEXT
+		ttl.value = {$constants.wecapi.xml.rss.ttl}
+		
+		last_build_date = TEXT
+		last_build_date.strftime = %a,  %m-%d-%Y, %h:%M %p %z
+		
+		docs = TEXT
+		docs.value = {$constants.wecapi.xml.rss.docs}
+
+		item_title < .channel_title
+		
+		item_link = TEXT
+		item_link {
+			wrap = <link>|</link>
+			
+			# You must specify this in your implementation
+			typolink = 
+		}
+		
+		item_description < . channel_description
+		
+		item_author = TEXT
+		item_author.wrap = <author>|</author>
+		
+		item_category < .channel_category
+		
+		item_comments =  TEXT
+		item_comments.wrap = <comments>|</comments>
+		item_comments {
+		
+			# You must specify this in your implementation
+			typolink = 
+		}
+		
+		item_enclosure = TEXT
+		item_enclosure {
+			value = <enclosure url="{register:url}" length="{register:length}" type="{register:type}" />
+			insertData = 1
+		}
+		
+		item_pubdate = TEXT
+		item_pubdate.strftime = %A,  %b. %d %Y
+		item_pubdate.wrap = <pubDate>|</pubDate>
+		
+		item_guid = TEXT
+		item_guid.wrap = <guid>|</guid>
+		
+		item_source = TEXT
+		item_source.dataWrap = <source url={register:url}>|<source>
+		
+	}
+}
+/*
+	version = CASE
+	version.rss2 < plugin.tx_wecapi_xml
+	version.rss2 {
+		templateFile = EXT:wec_api/res/rss2.tmpl
+		version.key = rss2
+	}
+
+
+rss2 = PAGE
+
+rss2 {
+	
+	# What is an appropriate typeNum to use in our code?
+	typeNum=
+	
+	10 < plugin.tx_wecapi_xml.version
+	10.key = rss2
+	
+	config {
+		disableAllHeaderCode = 1
+#		additionalHeaders = Content-type:application/xml
+		xhtml_cleaning = 0
+		admPanel = 0
+	}
+	
+}
+*/
