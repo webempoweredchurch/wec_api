@@ -7,12 +7,17 @@ plugin.tx_wecapi_xml {
 
 	userFunc = tx_wecapi_xml->main
 	
+	templateFile = EXT:wec_api/res/rss2.tmpl
+	
+	#	Marker array representing all of the markers we have in our template
 	markerArray {
 		channel_title = 
 		channel_link = 
 		channel_description =
+		xmlns =
 	}
 
+	# a CASE cObject that will allow us to choose our rendering for each marker
 	tag_rendering = CASE
 	
 	tag_rendering {
@@ -107,32 +112,23 @@ plugin.tx_wecapi_xml {
 		item_source.dataWrap = <source url={register:url}>|<source>
 		
 	}
-}
-/*
-	version = CASE
-	version.rss2 < plugin.tx_wecapi_xml
-	version.rss2 {
-		templateFile = EXT:wec_api/res/rss2.tmpl
-		version.key = rss2
-	}
-
-
-rss2 = PAGE
-
-rss2 {
 	
-	# What is an appropriate typeNum to use in our code?
-	typeNum=
-	
-	10 < plugin.tx_wecapi_xml.version
-	10.key = rss2
-	
-	config {
+	rss2 = PAGE
+	rss2.config {
 		disableAllHeaderCode = 1
-#		additionalHeaders = Content-type:application/xml
+		additionalHeaders = Content-type:application/xml
 		xhtml_cleaning = 0
 		admPanel = 0
 	}
-	
+
+	rss2.10 < plugin.tx_wecapi_xml
+	rss2.10.version = rss2
+	rss2.10.tag_rendering {
+		channel_title.field = title
+		channel_description.field = description
+		channel_link.field = link
+		channel_category.field = category
+	}
+
 }
-*/
+
