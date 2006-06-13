@@ -63,6 +63,8 @@ class tx_wecapi_xml {
 			'category' => 'Channel Category',
 		);
 
+		return $this->getXMLContent($dataArray);
+
 		//	An example of populating the register to be used by the TypoScript cObject 
 		$GLOBALS['TSFE']->register['domain'] = "http://theslezak.com/test/";
 
@@ -70,9 +72,29 @@ class tx_wecapi_xml {
 		$template = $this->cObj->getSubpart( $this->cObj->fileResource( $this->conf['templateFile'] ), getMarkerTagName('template_'.$this->conf['version']) );
 
 		//	Return the content after data is injected into the template
-		return $this->getRowContent( 'tx_wecsermons_sermons', $dataArray, $markerArray, array(), $template );
+		return $this->getRowContent( 'tx_wecsermons_ser mons', $dataArray, $markerArray, array(), $template );
 
 
+	}
+	
+	/**
+	 *	getXMLContent	Returns the content given a dataArray
+	 *
+	 *	@param	array	An array of associative arrays, composing each of the data elements which will become <items> in our XML output
+	 *
+	 */
+	function getXMLContent( $dataArray ) {
+		
+		foreach( $dataArray as $dataRow ) {
+			
+			//	Create each <item> structure for our XML.
+			
+		}
+		
+		//	Drop the aggregate content into the ###ITEM### subpart
+		
+		//	process overriding channel properties
+		
 	}
 
 	/**

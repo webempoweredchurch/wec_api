@@ -9,3 +9,5 @@ constants.wecapi.xml.rss.language = en-US
 constants.wecapi.xml.rss.managing_editor = 
 
 constants.wecapi.xml.rss.ttl =
+
+constants.wec.copyright = 2006 First United Methodist Church

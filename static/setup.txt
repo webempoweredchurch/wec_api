@@ -11,10 +11,23 @@ plugin.tx_wecapi_xml {
 	
 	#	Marker array representing all of the markers we have in our template
 	markerArray {
+		generator =
+		gen_date =
+		xmlns =
+
 		channel_title = 
 		channel_link = 
 		channel_description =
-		xmlns =
+		language =
+		namespace_entries =
+		copyright =
+		last_build_date =
+		docs =
+		channel_generator =
+		channel_category =
+		managing_editor =
+		webmaster =
+		ttl =
 	}
 
 	# a CASE cObject that will allow us to choose our rendering for each marker
@@ -25,6 +38,13 @@ plugin.tx_wecapi_xml {
 		# Key is assigned value of the marker name
 		key = 
 		
+		generator = TEXT
+		generator.value = {$constants.wecapi.xml.rss.generator}
+
+		gen_date = TEXT
+		gen_date.strftime = %a,  %m-%d-%Y, %h:%M %p %z
+		gen_date.wrap = <gen_date>|</gen_date>
+
 		channel_title  = TEXT
 		channel_title.wrap = <title>|</title>
 		
@@ -42,33 +62,38 @@ plugin.tx_wecapi_xml {
 		channel_category = TEXT
 		channel_category.dataWrap =  <category domain="{register:domain}">|</category>
 
-		generator = TEXT
-		generator.value = {$constants.wecapi.xml.rss.generator}
-		
-		gen_date = TEXT
-		gen_date.strftime = %a,  %m-%d-%Y, %h:%M %p %z
-
+		channel_generator = TEXT
+		channel_generator.value = {$constants.wecapi.xml.rss.generator}
+		channel_generator.wrap = <generator>|</generator>
+	
 		copyright = TEXT
 		copyright.value = {$constants.wec.copyright}
+		copyright.wrap = <copyright>|</copyright>
 		
 		# This should be a valid language code. See http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
 		language = TEXT
 		language.value = {$constants.wecapi.xml.rss.language}
+		language.wrap = <language>|</language>
 		
 		managing_editor = TEXT
-		managing_edit.value = {$constants.wecapi.xml.rss.managing_editor}
+		managing_editor.value = {$constants.wecapi.xml.rss.managing_editor}
+		managing_editor.wrap = <managing_editor>|</managing_editor>
 		
 		webmaster = TEXT
 		webmaster.value = {$constants.wec.adminEmail}
+		webmaster.wrap = <webmaster>|</webmaster>
 		
 		ttl = TEXT
 		ttl.value = {$constants.wecapi.xml.rss.ttl}
+		ttl.wrap = <ttl>|</ttl>
 		
 		last_build_date = TEXT
-		last_build_date.strftime = %a,  %m-%d-%Y, %h:%M %p %z
+		last_build_date.strftime = %a,  %m-%d-%Y, %I:%M %p %z
+		last_build_date.wrap = <last_build_date>|</last_build_date>
 		
 		docs = TEXT
 		docs.value = {$constants.wecapi.xml.rss.docs}
+		docs.wrap = <docs>|</docs>
 
 		item_title < .channel_title
 		
