@@ -1,13 +1,15 @@
 # Include our xml class
-includeLibs.tx_wecapi_xml= EXT:wec_api/class.tx_wecapi_xml.php
+includeLibs.tx_wecapi_list= EXT:wec_api/class.tx_wecapi_list.php
 
-plugin.tx_wecapi_xml >
-plugin.tx_wecapi_xml = USER
-plugin.tx_wecapi_xml {
+plugin.tx_wecapi_list >
+plugin.tx_wecapi_list = USER
+plugin.tx_wecapi_list {
 
-	userFunc = tx_wecapi_xml->main
+	userFunc = tx_wecapi_list->main
 	
 	templateFile = EXT:wec_api/res/rss2.tmpl
+	
+	xmlFormat = rss2
 	
 	#	Marker array representing all of the markers we have in our template
 	markerArray {
@@ -40,6 +42,7 @@ plugin.tx_wecapi_xml {
 		
 		generator = TEXT
 		generator.value = {$constants.wecapi.xml.rss.generator}
+		generator.field = 
 
 		gen_date = TEXT
 		gen_date.strftime = %a,  %m-%d-%Y, %h:%M %p %z
@@ -122,7 +125,7 @@ plugin.tx_wecapi_xml {
 		
 		item_enclosure = TEXT
 		item_enclosure {
-			value = <enclosure url="{register:url}" length="{register:length}" type="{register:type}" />
+			value = <enclosure url="{field:url}" length="{field:length}" type="{field:type}" />
 			insertData = 1
 		}
 		
@@ -134,7 +137,7 @@ plugin.tx_wecapi_xml {
 		item_guid.wrap = <guid>|</guid>
 		
 		item_source = TEXT
-		item_source.dataWrap = <source url={register:url}>|<source>
+		item_source.dataWrap = <source url={field:url}>|<source>
 		
 	}
 	
@@ -146,7 +149,7 @@ plugin.tx_wecapi_xml {
 		admPanel = 0
 	}
 
-	rss2.10 < plugin.tx_wecapi_xml
+	rss2.10 < plugin.tx_wecapi_list
 	rss2.10.version = rss2
 	rss2.10.tag_rendering {
 		channel_title.field = title
