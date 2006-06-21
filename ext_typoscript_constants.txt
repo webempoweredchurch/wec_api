@@ -1,4 +1,9 @@
 
+constants.wec.xml.rss.channel_title = Syndicated Sermons
+
+constants.wec.xml.rss.channel_descr = Our online sermons feed
+
+constants.wec.xml.rss.channel_category = Religious
 
 constants.wecapi.xml.rss.docs = http://validator.w3.org/feed/docs/rss2.html#syndic8
 
@@ -6,7 +11,7 @@ constants.wecapi.xml.rss.generator = TYPO3 v4.0.0 CMS
 
 constants.wecapi.xml.rss.language = en-US
 
-constants.wecapi.xml.rss.managing_editor = 
+constants.wecapi.xml.rss.managing_editor = admin@demo.webempoweredchurch.org
 
 constants.wecapi.xml.rss.ttl =
 

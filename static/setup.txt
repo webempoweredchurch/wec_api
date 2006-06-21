@@ -12,11 +12,10 @@ plugin.tx_wecapi_list {
 	xmlFormat = rss2
 	
 	#	Marker array representing all of the markers we have in our template
-	markerArray {
+	channelArray {
 		generator =
 		gen_date =
 		xmlns =
-
 		channel_title = 
 		channel_link = 
 		channel_description =
@@ -31,6 +30,19 @@ plugin.tx_wecapi_list {
 		webmaster =
 		ttl =
 	}
+	
+	itemArray {
+		item_title =
+		item_link =
+		item_description =
+		item_author =
+		item_category =
+		item_comments =
+		item_enclosure =
+		item_pubdate = 
+		item_guid =
+		item_source =
+	}
 
 	# a CASE cObject that will allow us to choose our rendering for each marker
 	tag_rendering = CASE
@@ -42,28 +54,35 @@ plugin.tx_wecapi_list {
 		
 		generator = TEXT
 		generator.value = {$constants.wecapi.xml.rss.generator}
-		generator.field = 
+
 
 		gen_date = TEXT
-		gen_date.strftime = %a,  %m-%d-%Y, %h:%M %p %z
-		gen_date.wrap = <gen_date>|</gen_date>
+		gen_date.data = date: D, d M Y h.i.s T
 
 		channel_title  = TEXT
+		channel_title.value = {$constants.wec.xml.rss.channel_title}
 		channel_title.wrap = <title>|</title>
 		
 		channel_link = TEXT
 		channel_link {
-			wrap = <link>|</link>
+			value = {$constants.wec.siteURL}
+			dataWrap = <link>|</link>
 			
 			# You must specify this in your implementation
-			typolink = 
+			typolink.parameter = 78
+			typolink.returnLast = url
 		}
 		
 		channel_description = TEXT
-		channel_description.wrap = <description>|</description>
+		channel_description {
+			value = {$constants.wec.xml.rss.channel_descr}
+			wrap = <description>|</description>
+
+		}
 		
 		channel_category = TEXT
-		channel_category.dataWrap =  <category domain="{register:domain}">|</category>
+		channel_category.value = {$constants.wec.xml.rss.channel_category}
+		channel_category.wrap =  <category>|</category>
 
 		channel_generator = TEXT
 		channel_generator.value = {$constants.wecapi.xml.rss.generator}
@@ -78,66 +97,57 @@ plugin.tx_wecapi_list {
 		language.value = {$constants.wecapi.xml.rss.language}
 		language.wrap = <language>|</language>
 		
+		# This should be the e-mail adddress for the responsible manager over all the articles 
 		managing_editor = TEXT
 		managing_editor.value = {$constants.wecapi.xml.rss.managing_editor}
-		managing_editor.wrap = <managing_editor>|</managing_editor>
+		managing_editor.wrap = <managingEditor>|</managingEditor>
 		
 		webmaster = TEXT
 		webmaster.value = {$constants.wec.adminEmail}
-		webmaster.wrap = <webmaster>|</webmaster>
+		webmaster.wrap = <webMaster>|</webMaster>
 		
-		ttl = TEXT
-		ttl.value = {$constants.wecapi.xml.rss.ttl}
-		ttl.wrap = <ttl>|</ttl>
+		ttl = 
 		
 		last_build_date = TEXT
-		last_build_date.strftime = %a,  %m-%d-%Y, %I:%M %p %z
-		last_build_date.wrap = <last_build_date>|</last_build_date>
+		last_build_date.data = date: D, d M Y h.i.s 
+		last_build_date.wrap = <lastBuildDate>|</lastBuildDate>
 		
 		docs = TEXT
 		docs.value = {$constants.wecapi.xml.rss.docs}
 		docs.wrap = <docs>|</docs>
 
-		item_title < .channel_title
+		item_title = TEXT
+		item_title.wrap = <title>|</title>
 		
 		item_link = TEXT
-		item_link {
-			wrap = <link>|</link>
-			
-			# You must specify this in your implementation
-			typolink = 
-		}
+		item_link.wrap = <link>|</link>
 		
-		item_description < . channel_description
+		item_description = TEXT
+		item_description.wrap = <description>|</description>
 		
-		item_author = TEXT
-		item_author.wrap = <author>|</author>
+		item_author = 
 		
+		# Assumed here that all articles will be categorized the same as the channel
 		item_category < .channel_category
 		
-		item_comments =  TEXT
-		item_comments.wrap = <comments>|</comments>
-		item_comments {
-		
-			# You must specify this in your implementation
-			typolink = 
-		}
+		item_comments =  
 		
 		item_enclosure = TEXT
 		item_enclosure {
-			value = <enclosure url="{field:url}" length="{field:length}" type="{field:type}" />
+			value = <enclosure url="{field:enclosure_url}" length="{field:size}" type="{field:mime_type}" />
 			insertData = 1
 		}
 		
 		item_pubdate = TEXT
-		item_pubdate.strftime = %A,  %b. %d %Y
+		item_pubdate.strftime = %a, %d %b %Y, %I:%M:%S %z
 		item_pubdate.wrap = <pubDate>|</pubDate>
+
 		
 		item_guid = TEXT
 		item_guid.wrap = <guid>|</guid>
 		
 		item_source = TEXT
-		item_source.dataWrap = <source url={field:url}>|<source>
+		item_source.dataWrap = <source url="{field:item_link}">|</source>
 		
 	}
 	
@@ -151,12 +161,8 @@ plugin.tx_wecapi_list {
 
 	rss2.10 < plugin.tx_wecapi_list
 	rss2.10.version = rss2
-	rss2.10.tag_rendering {
-		channel_title.field = title
-		channel_description.field = description
-		channel_link.field = link
-		channel_category.field = category
-	}
+	rss2.10.CMD = xml
+
 
 }
 

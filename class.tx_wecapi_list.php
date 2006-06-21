@@ -54,18 +54,18 @@ class tx_wecapi_list extends tslib_cObj{
 	 */
 	function getContent( &$cObj, $dataArray, $tableName ) {
 
-		$this->init($conf);
 	
 		$xml = t3lib_div::makeInstance('tx_wecapi_list'); 
+		$xml->init($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_wecapi_list.']);
 		$xml->cObj = $cObj;
 
 		switch( gettype( $dataArray ) ) {
 			case 'resource':
-				return $this->getContentFromResource( $dataArray, $tableName );
+				return $xml->getContentFromResource( $dataArray, $tableName );
 			break;
 			
 			case 'array':
-				return $this->getContentFromArray( $dataArray, $tableName );
+				return $xml->getContentFromArray( $dataArray, $tableName );
 			break;
 			
 			default:
@@ -91,13 +91,26 @@ class tx_wecapi_list extends tslib_cObj{
 		$content = '';
 		$template = $this->getTemplate();
 		$itemTemplate = $this->local_cObj->getSubpart( $template, getMarkerTagName('item') );
-		
+
 			//	Substitute all the channel information
 		$template = $this->local_cObj->substituteMarkerArrayCached( $template, $this->conf['markerArray.'], array(), array() );
 		
+			//	Channel mapping array
+		$mappingArray = $this->conf['channelArray.'];
+		$mappingArray['channel_link'] = $this->cObj->getUrlToList( true, $tableName );
+
+
+		$template = $this->getRowContent( $tableName, $mappingArray, $template, $mappingArray );
+
+		$mappingArray = $this->conf['itemArray.'];
+		
 			//	Iterate every data item, aggregate the content
-		while( $row = $GLOBALS['TYPO3_DB']->sql_fetch_row($res) ) {
-			$content .= $this->getRowContent( $tableName, $row, $itemTemplate );
+		while( $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res) ) {
+			
+				//	Make a callback to get the URL to this record. Parent object must support getUrlToSingle function call!
+			$row['item_link'] = $this->cObj->getUrlToSingle( true, $tableName, $row['uid'] );
+			$content .= $this->getRowContent( $tableName, $row, $itemTemplate, $mappingArray );
+
 		}
 
 			//	Return template content fully populated with data
@@ -122,8 +135,11 @@ class tx_wecapi_list extends tslib_cObj{
 			//	Substitute all the channel information
 		$template = $this->local_cObj->substituteMarkerArrayCached( $template, $this->conf['markerArray.'], array(), array() );
 				
-		foreach( $mappingArray as $offset => $row ) {
-			$content .= $this->getRowContent( $tableName, $row, $itemTemplate );
+		$mappingArray = $this->conf['itemArray.'];
+
+		foreach( $dataArray as $offset => $row ) {
+		
+			$content .= $this->getRowContent( $tableName, $row, $itemTemplate, $mappingArray );
 		}
 
 			//	Return XML content fully populated with data
@@ -161,29 +177,32 @@ class tx_wecapi_list extends tslib_cObj{
 	 *
 	 * @return	string		Returns the content of the data array $row, formatted by the template $rowTemplate
 	 */
-	function getRowContent($tableName, $row, $rowTemplate )
+	function getRowContent($tableName, $row, $rowTemplate, $markerArray)
 	{
-
-		$markerArray = $this->conf['markerArray.'];
 
 		//	use the local_cObj to render each record row
 		$this->local_cObj->start( $row, $tableName );
 		foreach( $markerArray as $marker => $value ) {
-
-			//	Set the key field for the CASE cObject, rendering the correct marker
-			$this->conf['tag_rendering.']['key'] = $marker;	
-
-			//	Call cObjGetSingle to render our content, assigning it back to the markerArray
-			$markerArray[getMarkerTagName( $marker )] = $this->local_cObj->cObjGetSingle( $this->conf['tag_rendering'], $this->conf['tag_rendering.'] );
-
+				
+				//	Only process if marker is not a typotag already
+			if( ! strrpos( $marker, '###') ) {
+				
+				//	Set the key field for the CASE cObject, rendering the correct marker
+				$this->conf['tag_rendering.']['key'] = $marker;	
+	
+				//	Call cObjGetSingle to render our content, assigning it back to the markerArray
+				$markerArray[getMarkerTagName( $marker )] = $this->local_cObj->cObjGetSingle( $this->conf['tag_rendering'], $this->conf['tag_rendering.'] );
+			}
 		}
 
 		//	Render links for wrapped subparts
-		foreach( $wrappedSubpartArray as $marker ) {
-			$this->conf['tag_rendering.']['key'] = $marker;
-			$wrappedSubpartArray[getMarkerTagName( $marker )] = $this->local_cObj->typolinkWrap($this->conf['tag_rendering'][$marker.'.']['typolink.'] );
+		if( $wrappedSubpartArray ) {
+			foreach( $wrappedSubpartArray as $marker ) {
+				$this->conf['tag_rendering.']['key'] = $marker;
+				$wrappedSubpartArray[getMarkerTagName( $marker )] = $this->local_cObj->typolinkWrap($this->conf['tag_rendering'][$marker.'.']['typolink.'] );
+			}
 		}
-
+//debug( $this->conf['tag_rendering.']  );		
 		return $this->local_cObj->substituteMarkerArrayCached($rowTemplate, $markerArray, array(), $wrappedSubpartArray );
 	}
 	
