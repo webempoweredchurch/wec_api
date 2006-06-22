@@ -6,18 +6,23 @@ plugin.tx_wecapi_list = USER
 plugin.tx_wecapi_list {
 
 	userFunc = tx_wecapi_list->main
+
+	# This is the template file we will load. Specify this in your template record.
+	# Some templates are provided in this extension. See the EXT:wec_api/res/ directory.
+	templateFile = 
+
+	# This property defines the name of the template subpart we will parse. F.e. ###TEMPLATE_<template_name>###
+	templateName = 
+
+	#	We specify two  arrays here in TypoScript. These one dimentional arrays are iterated, each key having an identically named counterpart in 'tag_rendering' below.
 	
-	templateFile = EXT:wec_api/res/rss2.tmpl
-	
-	xmlFormat = rss2
-	
-	#	Marker array representing all of the markers we have in our template
-	channelArray {
+	# Array pageArray is used to map marker tags outside of the ITEM subpart.
+	pageArray {
 		generator =
 		gen_date =
 		xmlns =
-		channel_title = 
-		channel_link = 
+		channel_title =
+		channel_link =
 		channel_description =
 		language =
 		namespace_entries =
@@ -30,7 +35,8 @@ plugin.tx_wecapi_list {
 		webmaster =
 		ttl =
 	}
-	
+
+	# Array itemArray is used to map marker tags within the ITEM subpart of the template.
 	itemArray {
 		item_title =
 		item_link =
@@ -39,22 +45,25 @@ plugin.tx_wecapi_list {
 		item_category =
 		item_comments =
 		item_enclosure =
-		item_pubdate = 
+		item_pubdate =
 		item_guid =
 		item_source =
 	}
 
+	# Following is an example of using tx_wecapi_list to generate an RSS 2.0 feed
+
+	# For every marker tag we want to replace in our template, we will specify a partner cObject that will determine how to render the tag.
+	# Using stdWrap's 'field' property, specify which field from the cObject data array maps to the cObject within the CASE
+
 	# a CASE cObject that will allow us to choose our rendering for each marker
 	tag_rendering = CASE
-	
 	tag_rendering {
-		
-		# Key is assigned value of the marker name
-		key = 
-		
+
+		# Key is assigned value of the marker name programmatically
+		key =
+
 		generator = TEXT
 		generator.value = {$constants.wecapi.xml.rss.generator}
-
 
 		gen_date = TEXT
 		gen_date.data = date: D, d M Y h.i.s T
@@ -62,24 +71,14 @@ plugin.tx_wecapi_list {
 		channel_title  = TEXT
 		channel_title.value = {$constants.wec.xml.rss.channel_title}
 		channel_title.wrap = <title>|</title>
-		
-		channel_link = TEXT
-		channel_link {
-			value = {$constants.wec.siteURL}
-			dataWrap = <link>|</link>
-			
-			# You must specify this in your implementation
-			typolink.parameter = 78
-			typolink.returnLast = url
-		}
-		
-		channel_description = TEXT
-		channel_description {
-			value = {$constants.wec.xml.rss.channel_descr}
-			wrap = <description>|</description>
 
-		}
-		
+		channel_link = TEXT
+		channel_link.wrap = <link>|</link>
+
+		channel_description = TEXT
+		channel_description.value = {$constants.wec.xml.rss.channel_descr}
+		channel_description.wrap = <description>|</description>
+
 		channel_category = TEXT
 		channel_category.value = {$constants.wec.xml.rss.channel_category}
 		channel_category.wrap =  <category>|</category>
@@ -87,70 +86,74 @@ plugin.tx_wecapi_list {
 		channel_generator = TEXT
 		channel_generator.value = {$constants.wecapi.xml.rss.generator}
 		channel_generator.wrap = <generator>|</generator>
-	
+
 		copyright = TEXT
 		copyright.value = {$constants.wec.copyright}
 		copyright.wrap = <copyright>|</copyright>
-		
+
 		# This should be a valid language code. See http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
 		language = TEXT
 		language.value = {$constants.wecapi.xml.rss.language}
 		language.wrap = <language>|</language>
-		
-		# This should be the e-mail adddress for the responsible manager over all the articles 
+
+		# E-mail adddress for the responsible manager over all the articles
 		managing_editor = TEXT
 		managing_editor.value = {$constants.wecapi.xml.rss.managing_editor}
 		managing_editor.wrap = <managingEditor>|</managingEditor>
-		
+
+		#	E-mail address of the webmaster
 		webmaster = TEXT
 		webmaster.value = {$constants.wec.adminEmail}
 		webmaster.wrap = <webMaster>|</webMaster>
-		
-		ttl = 
-		
+
+		ttl = TEXT
+		ttl.wrap = <ttl>|</ttl>
+
 		last_build_date = TEXT
-		last_build_date.data = date: D, d M Y h.i.s 
+		last_build_date.data = date: D, d M Y h.i.s
 		last_build_date.wrap = <lastBuildDate>|</lastBuildDate>
-		
+
 		docs = TEXT
 		docs.value = {$constants.wecapi.xml.rss.docs}
 		docs.wrap = <docs>|</docs>
 
 		item_title = TEXT
 		item_title.wrap = <title>|</title>
-		
+
 		item_link = TEXT
 		item_link.wrap = <link>|</link>
-		
+
 		item_description = TEXT
 		item_description.wrap = <description>|</description>
-		
-		item_author = 
-		
+		item_description.crop = 75|...
+
+		item_author = TEXT
+		item_author.wrap = <author>|</author>
+
 		# Assumed here that all articles will be categorized the same as the channel
 		item_category < .channel_category
-		
-		item_comments =  
-		
+
+		item_comments =  TEXT
+		item_comments.wrap = <comments>|</comments>
+
 		item_enclosure = TEXT
-		item_enclosure {
-			value = <enclosure url="{field:enclosure_url}" length="{field:size}" type="{field:mime_type}" />
-			insertData = 1
-		}
-		
+		item_enclosure.value = <enclosure url="{field:enclosure_url}" length="{field:size}" type="{field:mime_type}" />
+		item_enclosure.insertData = 1
+
 		item_pubdate = TEXT
 		item_pubdate.strftime = %a, %d %b %Y, %I:%M:%S %z
 		item_pubdate.wrap = <pubDate>|</pubDate>
 
-		
 		item_guid = TEXT
 		item_guid.wrap = <guid>|</guid>
-		
+
 		item_source = TEXT
+		item_source = {$constants.wec.xml.rss.channel_title}
 		item_source.dataWrap = <source url="{field:item_link}">|</source>
-		
+
 	}
-	
+
+	# Making a copy of this at global scope will allow you to output the XML template only
 	rss2 = PAGE
 	rss2.config {
 		disableAllHeaderCode = 1
@@ -158,11 +161,6 @@ plugin.tx_wecapi_list {
 		xhtml_cleaning = 0
 		admPanel = 0
 	}
-
-	rss2.10 < plugin.tx_wecapi_list
-	rss2.10.version = rss2
-	rss2.10.CMD = xml
-
 
 }
 

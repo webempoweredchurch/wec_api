@@ -55,27 +55,81 @@ class tx_wecapi_list extends tslib_cObj{
 	function getContent( &$cObj, $dataArray, $tableName ) {
 
 	
-		$xml = t3lib_div::makeInstance('tx_wecapi_list'); 
-		$xml->init($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_wecapi_list.']);
-		$xml->cObj = $cObj;
+		$tx_wecapi_list = t3lib_div::makeInstance('tx_wecapi_list'); 
+		$tx_wecapi_list->init($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_wecapi_list.']);
+		$tx_wecapi_list->cObj = $cObj;
 
-		switch( gettype( $dataArray ) ) {
-			case 'resource':
-				return $xml->getContentFromResource( $dataArray, $tableName );
-			break;
+		$content = '';
+		$template = $this->getTemplate();
+
+			//	Page mapping array
+		$pageArray = $this->conf['pageArray.'];
+		
+			//	Data array representing a row of data
+		$dataArray = array();
+
+			// Hook for pre-processing the page marker array
+		if( is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['tx_wecapi_list']['preProcessPageArray'] ) ) {
 			
-			case 'array':
-				return $xml->getContentFromArray( $dataArray, $tableName );
-			break;
+			foreach( $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['tx_wecapi_list']['preProcessPageArray'] as $classRef ) {
+				
+				$processObject = &t3lib_div::getUserObj( $classRef, 'tx_' );
+				
+				$processObject->preProcessPageArray( &$this, &$dataArray, &$pageArray );
+			}
 			
-			default:
+		}
+		
+			// Process all the page array markers
+		$template = $this->getRowContent( $tableName, $dataArray, $template, $pageArray );
+
+		$itemArray = $this->conf['itemArray.'];
+
+			// Hook for pre-processing the item marker array
+		if( is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['tx_wecapi_list']['preProcessItemArray'] ) ) {
+			
+			foreach( $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['tx_wecapi_list']['preProcessItemArray'] as $classRef ) {
+				
+				$processObject = &t3lib_div::getUserObj( $classRef, 'tx_' );
+				
+				$processObject->preProcessItemArray( &$this, &$itemArray );
+			}
+			
+		}
+
+			// Retrieve the ###ITEM### subpart
+		$itemTemplate = $this->local_cObj->getSubpart( $template, getMarkerTagName('item') );
+
+
+		if( gettype( $dataArray ) == 'array' ) {
+			
+			foreach( $dataArray as $offset => $row ) {
+			
+				$content .= $this->getRowContent( $tableName, $row, $itemTemplate, $itemArray );
+			}
+
+		}
+		else if( gettype( $dataArray ) == 'resource' ) {
+			
+				//	Iterate every data item, aggregate the content
+			while( $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res) ) {
+				
+				$content .= $this->getRowContent( $tableName, $row, $itemTemplate, $mappingArray );
+	
+			}
+		}
+		else {
+			
 				return '
 				WEC XML Error!<br>
 				The parameter sent to tx_wecapi_list::getXMLContent was not of type \'resource\' or \'array\'<br>
 				The parameter type was: ' .  $gettype( $dataArray );
-		
 		}
-			
+		
+			//	Return template content fully populated with data
+		return $this->local_cObj->substituteSubpart( $template, getMarkerTagName('item'), $content );
+		
+
 	}
 
 	/**
@@ -93,12 +147,23 @@ class tx_wecapi_list extends tslib_cObj{
 		$itemTemplate = $this->local_cObj->getSubpart( $template, getMarkerTagName('item') );
 
 			//	Substitute all the channel information
-		$template = $this->local_cObj->substituteMarkerArrayCached( $template, $this->conf['markerArray.'], array(), array() );
+		$template = $this->local_cObj->substituteMarkerArrayCached( $template, $this->conf['pageArray.'], array(), array() );
 		
 			//	Channel mapping array
-		$mappingArray = $this->conf['channelArray.'];
+		$mappingArray = $this->conf['pageArray.'];
 		$mappingArray['channel_link'] = $this->cObj->getUrlToList( true, $tableName );
 
+			// Hook for post-processing the page marker array
+		if( is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['tx_wecapi_list']['postProcessPageArray'] ) ) {
+			
+			foreach( $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['tx_wecapi_list']['postProcessPageArray'] as $classRef ) {
+				
+				$processObject = &t3lib_div::getUserObj( $classRef, 'tx_' );
+				
+				$processObject->postProcessPageArray( $this, $mappingArray );
+			}
+			
+		}
 
 		$template = $this->getRowContent( $tableName, $mappingArray, $template, $mappingArray );
 
@@ -126,20 +191,11 @@ class tx_wecapi_list extends tslib_cObj{
 	 * 
 	 * @return	string		Template content fully populated with data
 	 */
-	function getContentFromArray( $dataArray, $tableName ) {
-
-		$content = '';
-		$template = $this->getTemplate();
-		$itemTemplate = $this->local_cObj->getSubpart( $template, getMarkerTagName('item') );
-		
-			//	Substitute all the channel information
-		$template = $this->local_cObj->substituteMarkerArrayCached( $template, $this->conf['markerArray.'], array(), array() );
-				
-		$mappingArray = $this->conf['itemArray.'];
+	function getContentFromArray( $dataArray, $itemTemplate, $tableName ) {
 
 		foreach( $dataArray as $offset => $row ) {
 		
-			$content .= $this->getRowContent( $tableName, $row, $itemTemplate, $mappingArray );
+			$content .= $this->getRowContent( $tableName, $row, $itemTemplate, $itemArray );
 		}
 
 			//	Return XML content fully populated with data
@@ -180,6 +236,19 @@ class tx_wecapi_list extends tslib_cObj{
 	function getRowContent($tableName, $row, $rowTemplate, $markerArray)
 	{
 
+			// Hook for pre-processing the row
+		if( is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['tx_wecapi_list']['preProcessContentRow'] ) ) {
+			
+			foreach( $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['tx_wecapi_list']['preProcessContentRow'] as $classRef ) {
+				
+				$processObject = &t3lib_div::getUserObj( $classRef, 'tx_' );
+				
+				$processObject->preProcessContentRow( &$this, &$row );
+			}
+			
+		}
+
+
 		//	use the local_cObj to render each record row
 		$this->local_cObj->start( $row, $tableName );
 		foreach( $markerArray as $marker => $value ) {
@@ -214,7 +283,7 @@ class tx_wecapi_list extends tslib_cObj{
 	function getTemplate() {
 
 			//	Read in the template content. Must have 'xmlFormat' specified in setup field, which determines the template that is read in.
-		return $this->local_cObj->getSubpart( $this->local_cObj->fileResource( $this->conf['templateFile'] ), getMarkerTagName('template_'.$this->conf['xmlFormat']) );
+		return $this->local_cObj->getSubpart( $this->local_cObj->fileResource( $this->conf['templateFile'] ), getMarkerTagName('template_'.$this->conf['templateName']) );
 		
 	}
 
