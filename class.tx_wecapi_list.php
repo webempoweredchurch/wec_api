@@ -46,28 +46,38 @@ class tx_wecapi_list extends tslib_cObj{
 	/**
 	 *	The entry point into the class. Creates an instance of this class, and returns the XML content given a dataArray
 	 *
-	 *	@param	reference	$cObj: An array of associative arrays, composing each of the data elements which will become <items> in our XML output
+	 *	@param	reference	$pObj: The parent object calling this function
 	 *	@param	mixed		$dataArray: Must be either a resource for a database result set, or an array of associative arrays. These compose each of the data elements which will replace the ITEM markers from our template
 	 *	@param	string		$tableName: An array of associative arrays, composing each of the data elements which will become <items> in our XML output
 	 *
 	 *	@return	string	Content from a processed template, with all markers and subparts substituted
 	 */
-	function getContent( &$cObj, $dataArray, $tableName ) {
+	function getContent( &$pObj, $dataArray, $tableName ) {
 
 	
 		$tx_wecapi_list = t3lib_div::makeInstance('tx_wecapi_list'); 
 		$tx_wecapi_list->init($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_wecapi_list.']);
-		$tx_wecapi_list->cObj = $cObj;
+		$tx_wecapi_list->cObj = $pObj;
 
+		return $tx_wecapi_list->getListContent($dataArray);
+
+	}
+	
+	/**
+	 * Processes a given data array and a template, returning the list content
+	 *
+	 * @param	mixed	$dataArray: See getContent()
+	 *
+	 * @return	string	Return is the list content, populated from dataArray and a template
+	 */
+	function getListContent($dataArray) {
+		
 		$content = '';
 		$template = $this->getTemplate();
 
 			//	Page mapping array
 		$pageArray = $this->conf['pageArray.'];
 		
-			//	Data array representing a row of data
-		$dataArray = array();
-
 			// Hook for pre-processing the page marker array
 		if( is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['tx_wecapi_list']['preProcessPageArray'] ) ) {
 			
@@ -79,9 +89,10 @@ class tx_wecapi_list extends tslib_cObj{
 			}
 			
 		}
-		
+	
+
 			// Process all the page array markers
-		$template = $this->getRowContent( $tableName, $dataArray, $template, $pageArray );
+		$template = $this->getRowContent( $tableName, $pageArray, $template, $pageArray );
 
 		$itemArray = $this->conf['itemArray.'];
 
@@ -128,108 +139,16 @@ class tx_wecapi_list extends tslib_cObj{
 		
 			//	Return template content fully populated with data
 		return $this->local_cObj->substituteSubpart( $template, getMarkerTagName('item'), $content );
-		
-
-	}
-
-	/**
-	 *	Processes a database resource, returning a fully populated template with all markers and subparts substituted.	
-	 *
-	 * @param	resource	$res: A resource to a database result
-	 * @param	string		$tableName: The tablename that the result set was selected from
-
-	 * @return	string		Template content fully populated with data
-	 */
-	function getContentFromResource( $res, $tableName ) {
-
-		$content = '';
-		$template = $this->getTemplate();
-		$itemTemplate = $this->local_cObj->getSubpart( $template, getMarkerTagName('item') );
-
-			//	Substitute all the channel information
-		$template = $this->local_cObj->substituteMarkerArrayCached( $template, $this->conf['pageArray.'], array(), array() );
-		
-			//	Channel mapping array
-		$mappingArray = $this->conf['pageArray.'];
-		$mappingArray['channel_link'] = $this->cObj->getUrlToList( true, $tableName );
-
-			// Hook for post-processing the page marker array
-		if( is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['tx_wecapi_list']['postProcessPageArray'] ) ) {
-			
-			foreach( $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['tx_wecapi_list']['postProcessPageArray'] as $classRef ) {
-				
-				$processObject = &t3lib_div::getUserObj( $classRef, 'tx_' );
-				
-				$processObject->postProcessPageArray( $this, $mappingArray );
-			}
-			
-		}
-
-		$template = $this->getRowContent( $tableName, $mappingArray, $template, $mappingArray );
-
-		$mappingArray = $this->conf['itemArray.'];
-		
-			//	Iterate every data item, aggregate the content
-		while( $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res) ) {
-			
-				//	Make a callback to get the URL to this record. Parent object must support getUrlToSingle function call!
-			$row['item_link'] = $this->cObj->getUrlToSingle( true, $tableName, $row['uid'] );
-			$content .= $this->getRowContent( $tableName, $row, $itemTemplate, $mappingArray );
-
-		}
-
-			//	Return template content fully populated with data
-		return $this->local_cObj->substituteSubpart( $template, getMarkerTagName('item'), $content );
-		
-	}
-
-	/**
-	 *	Processes an array of associative arrays, returning a fully populated template with all markers and subparts substituted. 
-	 *
-	 * @param	array		$dataArray: An array of associative arrays, composing each of the data elements which will replace the ITEM subpart in our template
-	 * @param	string		$tableName: The tablename that the result set was selected from
-	 * 
-	 * @return	string		Template content fully populated with data
-	 */
-	function getContentFromArray( $dataArray, $itemTemplate, $tableName ) {
-
-		foreach( $dataArray as $offset => $row ) {
-		
-			$content .= $this->getRowContent( $tableName, $row, $itemTemplate, $itemArray );
-		}
-
-			//	Return XML content fully populated with data
-		return $this->local_cObj->substituteSubpart( $template, getMarkerTagName('item'), $content );
 
 	}
 	
-	/**
-	 *	Processes an XML structure, returning a fully populated template with all markers and subparts substituted. 
-	 *
-	 * @param	string		$xml: An array of associative arrays, composing each of the data elements which will replace the ITEM subpart in our template
-	 * @param	string		$tableName: The tablename that the result set was selected from
-	 * 
-	 * @return	string		Template content fully populated with data
-	 */
-	function getContentfromXMLString( $xml, $tableName ) {
-
-		/*	Future functionality to parse if passed in as XML instead of array
-					//	If mappingArray is not an array, see if it is xml by converting it
-				if( ! is_array( $mappingArray) )
-					$mappingArray = t3lib_div::xml2array( $mappingArray );
-		
-					//	If mappingArray is still not an array, assume xml2array returned a string error, to bubble this up
-				if( ! is_array( $mappingArray ) ) return $mappingArray;
-		
-		*/		
-	}
-
 	/**
 	 * This function processes one row of data and substitutes markers in the template with the data
 	 *
 	 * @param	string		$tableName: The tablename that the result set was selected from 
 	 * @param	array		$row: An associative array with lowercase TYPO tag names as keys, that maps data to markers
 	 * @param	string		$rowTemplate: A marker-based template defining the layout of the data
+	 * @param	string		$markerArray: An associative array of marker tags as keys
 	 *
 	 * @return	string		Returns the content of the data array $row, formatted by the template $rowTemplate
 	 */
@@ -276,7 +195,7 @@ class tx_wecapi_list extends tslib_cObj{
 	}
 	
 	/**
-	 * Retrieves the template content associated with this class
+	 * Retrieves the template content associated with the tx_wecapi_list class
 	 *
 	 * @return	string		The content of the template content associated with this class
 	 */

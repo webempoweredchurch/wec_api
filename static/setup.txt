@@ -107,6 +107,7 @@ plugin.tx_wecapi_list {
 		webmaster.wrap = <webMaster>|</webMaster>
 
 		ttl = TEXT
+		ttl.value = {$constants.wec
 		ttl.wrap = <ttl>|</ttl>
 
 		last_build_date = TEXT
