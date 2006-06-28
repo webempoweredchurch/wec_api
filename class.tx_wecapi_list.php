@@ -44,6 +44,15 @@ class tx_wecapi_list extends tslib_cObj{
 	}
 	
 	/**
+	*	Not used, as we need to pass in a dataArray
+	*
+	*/
+	function main( $content, $conf ) {
+		
+		return '';
+	}
+	
+	/**
 	 *	The entry point into the class. Creates an instance of this class, and returns the XML content given a dataArray
 	 *
 	 *	@param	reference	$pObj: The parent object calling this function
@@ -125,14 +134,14 @@ class tx_wecapi_list extends tslib_cObj{
 				//	Iterate every data item, aggregate the content
 			while( $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res) ) {
 				
-				$content .= $this->getRowContent( $tableName, $row, $itemTemplate, $mappingArray );
+				$content .= $this->getRowContent( $tableName, $row, $itemTemplate, $itemArray );
 	
 			}
 		}
 		else {
 			
 				return '
-				WEC XML Error!<br>
+				WEC List Error!<br>
 				The parameter sent to tx_wecapi_list::getXMLContent was not of type \'resource\' or \'array\'<br>
 				The parameter type was: ' .  $gettype( $dataArray );
 		}
@@ -170,6 +179,14 @@ class tx_wecapi_list extends tslib_cObj{
 
 		//	use the local_cObj to render each record row
 		$this->local_cObj->start( $row, $tableName );
+		
+		if( !is_array($markerArray) ) {
+			return '
+				WEC List Error!<br>
+				The $markerArray parameter sent to tx_wecapi_list::getRowContent was not of type \'array\'<br>
+				The parameter type was: ' .  $gettype( $dataArray );
+			
+		}
 		foreach( $markerArray as $marker => $value ) {
 				
 				//	Only process if marker is not a typotag already
@@ -180,6 +197,11 @@ class tx_wecapi_list extends tslib_cObj{
 	
 				//	Call cObjGetSingle to render our content, assigning it back to the markerArray
 				$markerArray[getMarkerTagName( $marker )] = $this->local_cObj->cObjGetSingle( $this->conf['tag_rendering'], $this->conf['tag_rendering.'] );
+if( $marker == 'channel_image' ) {
+	debug( $markerArray[getMarkerTagName( $marker )],1 );
+	debug( $this->conf['tag_rendering.'][$marker.'.'] ,1 );
+	debug( $this->conf ,1 );
+}
 			}
 		}
 

@@ -9,10 +9,10 @@ plugin.tx_wecapi_list {
 
 	# This is the template file we will load. Specify this in your template record.
 	# Some templates are provided in this extension. See the EXT:wec_api/res/ directory.
-	templateFile = 
+	templateFile = {$plugin.tx_wecapi_list.templateFile}
 
 	# This property defines the name of the template subpart we will parse. F.e. ###TEMPLATE_<template_name>###
-	templateName = 
+	templateName = {$plugin.tx_wecapi_list.templateName}
 
 	#	We specify two  arrays here in TypoScript. These one dimentional arrays are iterated, each key having an identically named counterpart in 'tag_rendering' below.
 	
@@ -34,6 +34,7 @@ plugin.tx_wecapi_list {
 		managing_editor =
 		webmaster =
 		ttl =
+		channel_image = 
 	}
 
 	# Array itemArray is used to map marker tags within the ITEM subpart of the template.
@@ -63,42 +64,49 @@ plugin.tx_wecapi_list {
 		key =
 
 		generator = TEXT
-		generator.value = {$constants.wecapi.xml.rss.generator}
+		generator.value = {$plugin.tx_wecapi_list.xml.rss.generator}
 
 		gen_date = TEXT
 		gen_date.data = date: D, d M Y h.i.s T
 
+		xmlns = TEXT
+		xmlns {
+			value = {$plugin.tx_wecapi_list.xml.rss.xmlns}
+			wrap = |
+			if.isTrue = {$plugin.tx_wecapi_list.xml.rss.xmlns}
+		}
+		
 		channel_title  = TEXT
-		channel_title.value = {$constants.wec.xml.rss.channel_title}
+		channel_title.value = {$plugin.tx_wecapi_list.xml.rss.channel_title}
 		channel_title.wrap = <title>|</title>
 
 		channel_link = TEXT
 		channel_link.wrap = <link>|</link>
 
 		channel_description = TEXT
-		channel_description.value = {$constants.wec.xml.rss.channel_descr}
+		channel_description.value = {$plugin.tx_wecapi_list.xml.rss.channel_descr}
 		channel_description.wrap = <description>|</description>
 
 		channel_category = TEXT
-		channel_category.value = {$constants.wec.xml.rss.channel_category}
+		channel_category.value = {$plugin.tx_wecapi_list.xml.rss.channel_category}
 		channel_category.wrap =  <category>|</category>
 
 		channel_generator = TEXT
-		channel_generator.value = {$constants.wecapi.xml.rss.generator}
+		channel_generator.value = {$plugin.tx_wecapi_list.xml.rss.generator}
 		channel_generator.wrap = <generator>|</generator>
 
 		copyright = TEXT
-		copyright.value = {$constants.wec.copyright}
+		copyright.value = {$plugin.tx_wecapi_list.xml.rss.copyright}
 		copyright.wrap = <copyright>|</copyright>
 
 		# This should be a valid language code. See http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
 		language = TEXT
-		language.value = {$constants.wecapi.xml.rss.language}
+		language.value = {$plugin.tx_wecapi_list.xml.rss.language}
 		language.wrap = <language>|</language>
 
 		# E-mail adddress for the responsible manager over all the articles
 		managing_editor = TEXT
-		managing_editor.value = {$constants.wecapi.xml.rss.managing_editor}
+		managing_editor.value = {$plugin.tx_wecapi_list.xml.rss.managing_editor}
 		managing_editor.wrap = <managingEditor>|</managingEditor>
 
 		#	E-mail address of the webmaster
@@ -107,15 +115,32 @@ plugin.tx_wecapi_list {
 		webmaster.wrap = <webMaster>|</webMaster>
 
 		ttl = TEXT
-		ttl.value = {$constants.wec
-		ttl.wrap = <ttl>|</ttl>
+		ttl {
+			value = {$plugin.tx_wecapi_list.xml.rss.ttl}
+			wrap = <ttl>|</ttl>
+			if.isTrue = {$plugin.tx_wecapi_list.xml.rss.ttl}
+		}
+		
+		channel_image = COA
+		channel_image {
+			wrap=<image>|</image>
+
+			10 = TEXT
+			10.value ={$plugin.tx_wecapi_list.xml.rss.image.title}
+			10.wrap = <title>|</title>
+			
+			20 = TEXT
+			20.value = {getenv:TYPO3_SITE_URL}/uploads/tf/msteph*
+			20.insertData = 1
+
+		}
 
 		last_build_date = TEXT
 		last_build_date.data = date: D, d M Y h.i.s
 		last_build_date.wrap = <lastBuildDate>|</lastBuildDate>
 
 		docs = TEXT
-		docs.value = {$constants.wecapi.xml.rss.docs}
+		docs.value = {$plugin.tx_wecapi_list.xml.rss.docs}
 		docs.wrap = <docs>|</docs>
 
 		item_title = TEXT
@@ -124,7 +149,7 @@ plugin.tx_wecapi_list {
 		item_link = TEXT
 		item_link.wrap = <link>|</link>
 
-		item_description = TEXT
+		item_description = TEXT 
 		item_description.wrap = <description>|</description>
 		item_description.crop = 75|...
 
