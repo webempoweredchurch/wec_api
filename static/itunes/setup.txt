@@ -90,10 +90,15 @@ plugin.tx_wecapi_list {
 		channel_description.value = {$plugin.tx_wecapi_list.xml.rss.channel_descr}
 		channel_description.wrap = <description>|</description>
 
-		channel_category = TEXT
-		channel_category.value = {$plugin.tx_wecapi_list.xml.rss.channel_category}
-		channel_category.wrap =  <category>|</category>
-
+		channel_category = COA
+		channel_category {
+		
+			10  = TEXT
+			10.dataWrap = <itunes:category text="{$plugin.tx_wecapi_list.xml.rss.channel_subcategory}" />
+			
+			stdWrap.dataWrap =  <itunes:category text="{$plugin.tx_wecapi_list.xml.rss.channel_category}">|</itunes:category>
+		}
+		
 		channel_generator = TEXT
 		channel_generator.value = {$plugin.tx_wecapi_list.xml.rss.generator}
 		channel_generator.wrap = <generator>|</generator>
@@ -124,24 +129,8 @@ plugin.tx_wecapi_list {
 			if.isTrue = {$plugin.tx_wecapi_list.xml.rss.ttl}
 		}
 		
-		channel_image = COA
-		channel_image {
-			wrap=<image>|</image>
-
-			10 = TEXT
-			10.value ={$plugin.tx_wecapi_list.xml.rss.image.title}
-			10.wrap = <title>|</title>
-			
-			20 = TEXT
-			20.value = {$plugin.tx_wecapi_list.xml.rss.image}
-			20.wrap = <url>|</url>
-
-			#	You must use the hook tx_wecapi_list.php:preProcessPageArray to set the field channel_link
-			30 = TEXT
-			30.data = field:channel_link
-			30.wrap = <link>|</link>
-
-		}
+		channel_image = TEXT
+		channel_image.dataWrap=<itunes:image href="{$plugin.tx_wecapi_list.xml.rss.image}"/>
 
 		last_build_date = TEXT
 		last_build_date.data = date: D, d M Y h.i.s
@@ -164,7 +153,9 @@ plugin.tx_wecapi_list {
 		item_description.crop = 75|...
 
 		item_author = TEXT
-		item_author.value = 
+		item_author.field = author
+		item_author.if.isTrue.field = author
+		item_author.wrap = <itunes:author>|</itunes:author>
 
 		# Assumed here that all articles will be categorized the same as the channel
 		item_category < .channel_category
@@ -193,9 +184,10 @@ plugin.tx_wecapi_list {
 		namespace_entries {
 			10 = TEXT
 			10 {
-				data = field:author
-				wrap = <itunes:author>|</itunes:author>
+				value = no
+				wrap = <itunes:explicit>|</itunes:explicit>
 			}
+			
 		}
 
 	}

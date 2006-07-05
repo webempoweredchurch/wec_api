@@ -197,11 +197,6 @@ class tx_wecapi_list extends tslib_cObj{
 	
 				//	Call cObjGetSingle to render our content, assigning it back to the markerArray
 				$markerArray[getMarkerTagName( $marker )] = $this->local_cObj->cObjGetSingle( $this->conf['tag_rendering'], $this->conf['tag_rendering.'] );
-if( $marker == 'channel_image' ) {
-	debug( $markerArray[getMarkerTagName( $marker )],1 );
-	debug( $this->conf['tag_rendering.'][$marker.'.'] ,1 );
-	debug( $this->conf ,1 );
-}
 			}
 		}
 
