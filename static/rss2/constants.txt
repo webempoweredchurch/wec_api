@@ -1,10 +1,16 @@
 
 plugin.tx_wecapi_list {
 
-	# cat=plugin.tx_wecapi_list/file/3; type=string; label = Image: Absolute URL (Address) to the image stored on a web server. I.e. http://domain.com/fileadmin/images/myImage.gif
+	# cat=plugin.tx_wecapi_list/file/10; type=file[html,htm,tmpl,txt]; label = Template File: The file that will provide the output visual layout, typically an HTML file
+	templateFile = EXT:wec_api/res/rss2.tmpl
+
+	# cat=plugin.tx_wecapi_list/file/15; type=string; label = Template Name: The name of the template subpart we will parse. F.e. ###TEMPLATE_<template_name>###
+	templateName = rss2
+
+	# cat=plugin.tx_wecapi_list/file/20; type=string; label = Image: Absolute URL (Address) to the image stored on a web server. I.e. http://domain.com/fileadmin/images/myImage.gif
 	xml.rss.image = 
 	
-	# cat=plugin.tx_wecapi_list/file/4; type=string; label = Image Title: Channel image title, describes the image
+	# cat=plugin.tx_wecapi_list/file/30; type=string; label = Image Title: Channel image title, describes the image
 	xml.rss.image.title =
 	
 	# cat=plugin.tx_wecapi_list/other/1; type=string; label= Generator: The proud generator of an XML feed
@@ -21,10 +27,10 @@ plugin.tx_wecapi_list {
 	xml.rss.channel_descr = Our syndicated sermons feed
 	
 	# cat=plugin.tx_wecapi_list/other/20; type=string; label= Channel Category: Specify one or more categories that the channel belongs to. Follows the same rules as the <item>-level category element
-	xml.rss.channel_category = Religious
+	xml.rss.channel_category = Religion &amp; Spirituality
 	
 	# cat=plugin.tx_wecapi_list/other/25; type=string; label= Copyright: The organization copyright
-	xml.rss.copyright = First United Methodist Church
+	xml.rss.copyright = &#xA9; First United Methodist Church
 	
 	# cat=plugin.tx_wecapi_list/other/30; type=string; label= Language:The language the channel is written in. This allows aggregators to group all Italian language sites, for example, on a single page
 	xml.rss.language = en-US

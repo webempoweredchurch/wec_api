@@ -35,6 +35,12 @@ plugin.tx_wecapi_list {
 		webmaster =
 		ttl =
 		channel_image = 
+		itunes_author =
+		itunes_category = 
+		itunes_keywords =
+		itunes_explicit =
+		itunes_image =
+		itunes_owner =
 	}
 
 	# Array itemArray is used to map marker tags within the ITEM subpart of the template.
@@ -90,15 +96,6 @@ plugin.tx_wecapi_list {
 		channel_description.value = {$plugin.tx_wecapi_list.xml.rss.channel_descr}
 		channel_description.wrap = <description>|</description>
 
-		channel_category = COA
-		channel_category {
-		
-			10  = TEXT
-			10.dataWrap = <itunes:category text="{$plugin.tx_wecapi_list.xml.rss.channel_subcategory}" />
-			
-			stdWrap.dataWrap =  <itunes:category text="{$plugin.tx_wecapi_list.xml.rss.channel_category}">|</itunes:category>
-		}
-		
 		channel_generator = TEXT
 		channel_generator.value = {$plugin.tx_wecapi_list.xml.rss.generator}
 		channel_generator.wrap = <generator>|</generator>
@@ -112,11 +109,6 @@ plugin.tx_wecapi_list {
 		language.value = {$plugin.tx_wecapi_list.xml.rss.language}
 		language.wrap = <language>|</language>
 
-		# E-mail adddress for the responsible manager over all the articles
-		managing_editor = TEXT
-		managing_editor.value = {$plugin.tx_wecapi_list.xml.rss.managing_editor}
-		managing_editor.wrap = <managingEditor>|</managingEditor>
-
 		#	E-mail address of the webmaster
 		webmaster = TEXT
 		webmaster.value = {$constants.wec.adminEmail}
@@ -129,12 +121,7 @@ plugin.tx_wecapi_list {
 			if.isTrue = {$plugin.tx_wecapi_list.xml.rss.ttl}
 		}
 		
-		channel_image = TEXT
-		channel_image.dataWrap=<itunes:image href="{$plugin.tx_wecapi_list.xml.rss.image}"/>
-
-		last_build_date = TEXT
-		last_build_date.data = date: D, d M Y h.i.s
-		last_build_date.wrap = <lastBuildDate>|</lastBuildDate>
+		last_build_date = 
 
 		docs = TEXT
 		docs.value = {$plugin.tx_wecapi_list.xml.rss.docs}
@@ -168,9 +155,7 @@ plugin.tx_wecapi_list {
 		item_enclosure.if.isTrue.field = enclosure_url
 		item_enclosure.insertData = 1
 
-		item_pubdate = TEXT
-		item_pubdate.strftime = %a, %d %b %Y, %I:%M:%S %z
-		item_pubdate.wrap = <pubDate>|</pubDate>
+		item_pubdate = 
 
 		item_guid = TEXT
 		item_guid.wrap = <guid>|</guid>
@@ -180,14 +165,38 @@ plugin.tx_wecapi_list {
 		item_source = {$constants.wec.xml.rss.channel_title}
 		item_source.dataWrap = <source url="{field:item_link}">|</source>
 		
-		namespace_entries = COA 
-		namespace_entries {
-			10 = TEXT
-			10 {
-				value = no
-				wrap = <itunes:explicit>|</itunes:explicit>
-			}
+		itunes_category = COA
+		itunes_category {
+		
+			10  = TEXT
+			10.dataWrap = <itunes:category text="{$plugin.tx_wecapi_list.xml.rss.channel_subcategory}" />
 			
+			stdWrap.dataWrap =  <itunes:category text="{$plugin.tx_wecapi_list.xml.rss.channel_category}">|</itunes:category>
+		}
+		
+		itunes_image = TEXT
+		itunes_image.dataWrap=<itunes:image href="{$plugin.tx_wecapi_list.xml.rss.image}"/>
+
+		itunes_explicit = TEXT
+		itunes_explicit.value = no
+		itunes_explicit.wrap = <itunes:explicit>|</itunes:explicit>
+
+		itunes_keywords = TEXT
+		itunes_keywords.value = {$plugin.tx_wecapi_list.xml.rss.keywords}
+		itunes_keywords.wrap = <itunes:keywords>|</itunes:keywords>
+		
+		itunes_owner = COA
+		itunes_owner {
+
+			10 = TEXT
+			10.value = {$plugin.tx_wecapi_list.xml.rss.owner_name}
+			10.wrap = <itunes:name>|</itunes:name>
+			
+			20 = TEXT
+			20.value = {$plugin.tx_wecapi_list.xml.rss.owner_email}
+			20.wrap = <itunes:email>|</itunes:email>
+			
+			wrap = <itunes:owner>|</itunes:owner>
 		}
 
 	}
