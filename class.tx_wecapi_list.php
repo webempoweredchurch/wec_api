@@ -57,7 +57,7 @@ class tx_wecapi_list extends tslib_cObj{
 	 *
 	 *	@param	reference	$pObj: The parent object calling this function
 	 *	@param	mixed		$dataArray: Must be either a resource for a database result set, or an array of associative arrays. These compose each of the data elements which will replace the ITEM markers from our template
-	 *	@param	string		$tableName: An array of associative arrays, composing each of the data elements which will become <items> in our XML output
+	 *	@param	string		$tableName: Name of table we are rendering records for
 	 *
 	 *	@return	string	Content from a processed template, with all markers and subparts substituted
 	 */
@@ -68,7 +68,7 @@ class tx_wecapi_list extends tslib_cObj{
 		$tx_wecapi_list->init($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_wecapi_list.']);
 		$tx_wecapi_list->cObj = $pObj;
 
-		return $tx_wecapi_list->getListContent($dataArray);
+		return $tx_wecapi_list->getListContent($dataArray, $tableName);
 
 	}
 	
@@ -76,10 +76,11 @@ class tx_wecapi_list extends tslib_cObj{
 	 * Processes a given data array and a template, returning the list content
 	 *
 	 * @param	mixed	$dataArray: See getContent()
+	 *	@param	string	$tableName: Name of table we are rendering records for
 	 *
 	 * @return	string	Return is the list content, populated from dataArray and a template
 	 */
-	function getListContent($dataArray) {
+	function getListContent($dataArray, $tableName) {
 		
 		$content = '';
 		$template = $this->getTemplate();
@@ -171,7 +172,7 @@ class tx_wecapi_list extends tslib_cObj{
 				
 				$processObject = &t3lib_div::getUserObj( $classRef, 'tx_' );
 				
-				$processObject->preProcessContentRow( &$this, &$row );
+				$processObject->preProcessContentRow( &$this, &$row, $tableName );
 			}
 			
 		}
