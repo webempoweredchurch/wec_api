@@ -24,11 +24,12 @@
 /**
  * class 'WEC Lists' for the 'WEC API' library. This class allows us to generate list views for front end plugins. 
  *
- * @author	Web Empowered Church Team, Foundation For Evangelism <wec_api@webempoweredchurch.org>
+ * @author	Web Empowered Church Team, Foundation For Evangelism <wecapi@webempoweredchurch.org>
  * @package TYPO3
  * @subpackage tx_wecapi
  */
 
+require_once(PATH_tslib.'class.tslib_content.php');
 require_once(PATH_t3lib.'class.t3lib_div.php');
 
 class tx_wecapi_list extends tslib_cObj{
