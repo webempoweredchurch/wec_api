@@ -125,7 +125,6 @@ class tx_wecapi_list extends tslib_cObj {
 			// Retrieve the ###ITEM### subpart
 		$itemTemplate = $this->local_cObj->getSubpart( $template, $this->getMarkerTagName('item') );
 
-
 		if( gettype( $dataArray ) == 'array' ) {
 
 			foreach( $dataArray as $offset => $row ) {
@@ -227,7 +226,6 @@ class tx_wecapi_list extends tslib_cObj {
 
 			//	Read in the template content. Must have 'xmlFormat' specified in setup field, which determines the template that is read in.
 		return $this->local_cObj->getSubpart( $this->local_cObj->fileResource( $this->conf['templateFile'] ), $this->getMarkerTagName('template_'.$this->conf['templateName']) );
-
 	}
 
 	/**

@@ -161,7 +161,8 @@ plugin.tx_wecapi_list {
 
 		item_description = TEXT 
 		item_description.wrap = <description>|</description>
-		item_description.crop = 75|...
+		item_description.crop = 75|...|1
+		item_description.stripHtml = 1
 
 		item_author = TEXT
 		item_author.value = 
