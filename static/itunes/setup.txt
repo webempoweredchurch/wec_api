@@ -58,6 +58,7 @@ plugin.tx_wecapi_list {
 		item_guid =
 		item_source =
 		item_itunes_subtitle = 
+		item_itunes_duration =
 	}
 
 	# Following is an example of using tx_wecapi_list to generate an RSS 2.0 feed
@@ -113,7 +114,7 @@ plugin.tx_wecapi_list {
 
 		#	E-mail address of the webmaster
 		webmaster = TEXT
-		webmaster.value = {$plugin.tx_wecapi_listxml.rss.owner_email}
+		webmaster.value = {$plugin.tx_wecapi_list.xml.rss.owner_email}
 		webmaster.wrap = <webMaster>|</webMaster>
 
 		ttl = TEXT
@@ -161,6 +162,8 @@ plugin.tx_wecapi_list {
 		item_enclosure.insertData = 1
 
 		item_pubdate = TEXT
+		item_pubdate.strftime = %A, %d %B %Y %H:%M:%S %z
+		item_pubdate.wrap = <pubDate>|</pubDate>
 
 		item_guid = TEXT
 		item_guid.wrap = <guid>|</guid>
@@ -173,6 +176,9 @@ plugin.tx_wecapi_list {
 		item_itunes_summary = TEXT
 		item_itunes_summary.wrap = <itunes:summary><![CDATA[|]]></itunes:summary>
 
+		item_itunes_duration = TEXT
+		item_itunes_duration.wrap = <itunes:duration>|</itunes:duration>
+		
 		itunes_category = COA
 		itunes_category {
 
@@ -208,7 +214,7 @@ plugin.tx_wecapi_list {
 		}
 
 		itunes_summary = TEXT
-		itunes_summary.wrap = <itunes:summary><![CDATA[|]]></itunes:summary>
+		itunes_summary.wrap = <itunes:summary><![CDATA[{$plugin.tx_wecapi_list.xml.rss.itunes_summary}]]></itunes:summary>
 
 	}
 

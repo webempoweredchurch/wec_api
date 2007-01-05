@@ -10,7 +10,6 @@ plugin.tx_wecapi_list {
 	# cat=plugin.tx_wecapi_list/file/20; type=string; label = iTunes Feed Image: Absolute URL (Address) to the image stored on a web server.  (Max size 300px by 300px)  I.e. http://domain.com/fileadmin/images/myImage.gif
 	xml.rss.image = 
 
-
 	# cat=plugin.tx_wecapi_list/other/1; type=string; label= Generator: The proud generator of an XML feed
 	xml.rss.generator = TYPO3 v4.0.0 CMS
 
@@ -23,9 +22,12 @@ plugin.tx_wecapi_list {
 	
 	# cat=plugin.tx_wecapi_list/other/15; type=string; label= Channel Description: This description is shown in a separate window that appears when the “circled i" in the Description column is clicked. It also appears on the iTunes page for your podcast. This field can be up to 4000 characters.
 	xml.rss.channel_descr = Our syndicated sermons feed
-	
+
 	# cat=plugin.tx_wecapi_list/other/17; type=string; label= Keywords: Keywords allowing users to search on a maximum of 12 text keywords. Use commas to separate keywords.
 	xml.rss.keywords = God,Jesus,Holy,Spirit
+	
+	# cat=plugin.tx_wecapi_list/other/16; type=string; label= iTunes Channel Summary: This description is shown in a separate window that appears when the “circled i" in the Description column is clicked. It also appears on the iTunes page for your podcast. This field can be up to 4000 characters.
+	xml.rss.itunes_summary = A weekly message from our church
 	
 	# cat=plugin.tx_wecapi_list/other/20; type=string; label= iTunes Channel Category: Specify an iTunes category listed at http://www.apple.com/itunes/podcasts/techspecs.html#_Toc526931698
 	xml.rss.channel_category = Religion &amp; Spirituality
