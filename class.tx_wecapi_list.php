@@ -29,6 +29,25 @@
  * @subpackage tx_wecapi
  */
 
+/**
+ * [CLASS/FUNCTION INDEX of SCRIPT]
+ *
+ *
+ *
+ *   54: class tx_wecapi_list extends tslib_cObj
+ *   63:     function init($conf)
+ *   75:     function main( $content, $conf )
+ *   88:     function getContent( &$pObj, $dataArray, $tableName )
+ *  107:     function getListContent($dataArray, $tableName)
+ *  188:     function getRowContent($tableName, $row, $rowTemplate, $markerArray)
+ *  244:     function getTemplate()
+ *  258:     function throwError( $type, $message, $detail = '' )
+ *  282:     function getMarkerTagName( $name )
+ *
+ * TOTAL FUNCTIONS: 8
+ * (This index is automatically created/updated by the extension "extdeveval")
+ *
+ */
 require_once(PATH_tslib.'class.tslib_content.php');
 require_once(PATH_t3lib.'class.t3lib_div.php');
 
@@ -39,7 +58,7 @@ class tx_wecapi_list extends tslib_cObj {
 	 * Used to initialize this class
 	 *
 	 * @param	array		$conf: TypoScript setup configuration for this object
-	 *
+	 * @return	void
 	 */
 	function init($conf) {
 		$this->local_cObj = t3lib_div::makeInstance('tslib_cObj'); // Local cObj.
@@ -47,22 +66,24 @@ class tx_wecapi_list extends tslib_cObj {
 	}
 
 	/**
-	*	Not used, as we need to pass in a dataArray
-	*
-	*/
+	 * Not used, as we need to pass in a dataArray
+	 *
+	 * @param	[type]		$content: ...
+	 * @param	[type]		$conf: ...
+	 * @return	[type]		...
+	 */
 	function main( $content, $conf ) {
 
 		return '';
 	}
 
 	/**
-	 *	The entry point into the class. Creates an instance of this class, and returns the XML content given a dataArray
+	 * The entry point into the class. Creates an instance of this class, and returns the XML content given a dataArray
 	 *
-	 *	@param	reference	$pObj: The parent object calling this function
-	 *	@param	mixed		$dataArray: Must be either a resource for a database result set, or an array of associative arrays. These compose each of the data elements which will replace the ITEM markers from our template
-	 *	@param	string		$tableName: Name of table we are rendering records for
-	 *
-	 *	@return	string	Content from a processed template, with all markers and subparts substituted
+	 * @param	reference		$pObj: The parent object calling this function
+	 * @param	mixed		$dataArray: Must be either a resource for a database result set, or an array of associative arrays. These compose each of the data elements which will replace the ITEM markers from our template
+	 * @param	string		$tableName: Name of table we are rendering records for
+	 * @return	string		Content from a processed template, with all markers and subparts substituted
 	 */
 	function getContent( &$pObj, $dataArray, $tableName ) {
 
@@ -79,10 +100,9 @@ class tx_wecapi_list extends tslib_cObj {
 	/**
 	 * Processes a given data array and a template, returning the list content
 	 *
-	 * @param	mixed	$dataArray: See getContent()
-	 *	@param	string	$tableName: Name of table we are rendering records for
-	 *
-	 * @return	string	Return is the list content, populated from dataArray and a template
+	 * @param	mixed		$dataArray: See getContent()
+	 * @param	string		$tableName: Name of table we are rendering records for
+	 * @return	string		Return is the list content, populated from dataArray and a template
 	 */
 	function getListContent($dataArray, $tableName) {
 
@@ -163,7 +183,6 @@ class tx_wecapi_list extends tslib_cObj {
 	 * @param	array		$row: An associative array with lowercase TYPO tag names as keys, that maps data to markers
 	 * @param	string		$rowTemplate: A marker-based template defining the layout of the data
 	 * @param	string		$markerArray: An associative array of marker tags as keys
-	 *
 	 * @return	string		Returns the content of the data array $row, formatted by the template $rowTemplate
 	 */
 	function getRowContent($tableName, $row, $rowTemplate, $markerArray)
@@ -255,11 +274,11 @@ class tx_wecapi_list extends tslib_cObj {
 	}
 
 	/**
-	*	getMarkerTagName	A helper function that returns a marker wrapped with # signs, and capitalized
-	*
-	*	@param	string	$name	A TYPOTag marker that may not be formatted properly
-	*	@return	string	A properly formatted marker tag
-	*/
+	 * getMarkerTagName	A helper function that returns a marker wrapped with # signs, and capitalized
+	 *
+	 * @param	string		$name	A TYPOTag marker that may not be formatted properly
+	 * @return	string		A properly formatted marker tag
+	 */
 	function getMarkerTagName( $name ) {
 		//	Fix subpart name if TYPO tags were not inserted
 	return strrpos( $name, '###') ? strtoupper( $name ) :  '###'.strtoupper( $name ).'###';

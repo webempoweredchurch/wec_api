@@ -1,4 +1,0 @@
-
-# cat=basic/enable/1; type=options[basic,intermediate,advanced]; label = Default Configuration: Choose what default configuration to start with. This allows your organization to choose what level of complexity to start out with.
-defaultConfig = intermediate
-
