@@ -92,7 +92,7 @@ plugin.tx_wecapi_list {
 
 		#	You must use the hook tx_wecapi_list.php:preProcessPageArray to set the field channel_link
 		channel_link = TEXT
-		channel_link.data = field:channel_link
+		channel_link.field = channel_link
 		channel_link.wrap = <link>|</link>
 
 		channel_description = TEXT
@@ -134,16 +134,16 @@ plugin.tx_wecapi_list {
 		item_title.wrap = <title>|</title>
 
 		item_itunes_subtitle = TEXT
-		item_itunes_subtitle.wrap = <itunes:subtitle>|</itunes:subtitle>
+		item_itunes_subtitle.wrap = <itunes:subtitle><![CDATA[|]]></itunes:subtitle>
 
 		#	You must use the hook tx_wecapi_list.php:preProcessContentRow to set the field item_link
 		item_link = TEXT
-		item_link.data = field:item_link
+		item_link.field = item_link
 		item_link.wrap = <link>|</link>
 
 		item_description = TEXT
 		item_description.wrap = <description><![CDATA[|]]></description>
-		item_description.crop = 200|...
+		item_description.crop = 200|...|2
 
 		item_author = TEXT
 		item_author.field = author
@@ -162,11 +162,11 @@ plugin.tx_wecapi_list {
 		item_enclosure.insertData = 1
 
 		item_pubdate = TEXT
-		item_pubdate.strftime = %A, %d %B %Y %H:%M:%S %z
+		item_pubdate.strftime = %A, %d %b %Y %H:%M:%S %z
 		item_pubdate.wrap = <pubDate>|</pubDate>
 
 		item_guid = TEXT
-		item_guid.wrap = <guid>|</guid>
+		item_guid.wrap = <guid isPermaLink="false">|</guid>
 
 		#	You must use the hook tx_wecapi_list.php:preProcessContentRow to set the field item_link
 		item_source = TEXT
