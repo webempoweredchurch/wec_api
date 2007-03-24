@@ -156,9 +156,10 @@ plugin.tx_wecapi_list {
 		item_comments =  TEXT
 		item_comments.value =
 
+		# Enclosure url. For this tag, "current" must ALWAYS be set to an absolute path pointing to the root of the site. The field enclosure_url is appended to "current" to form the entire url.
 		item_enclosure = TEXT
-		item_enclosure.value = <enclosure url="{field:enclosure_url}" length="{field:size}" type="{field:mime_type}" />
-		item_enclosure.if.isTrue.field = enclosure_url
+		item_enclosure.value = <enclosure url="{current:1}{field:enclosure_url}" length="{field:size}" type="{field:mime_type}" />
+		item_enclosure.setCurrent = {$constants.wec.siteURL}
 		item_enclosure.insertData = 1
 
 		item_pubdate = TEXT

@@ -89,8 +89,11 @@ class tx_wecapi_list extends tslib_cObj {
 
 
 		$tx_wecapi_list = t3lib_div::makeInstance('tx_wecapi_list');
+
 		$ts_parser = t3lib_div::makeInstance('t3lib_TSparser');
-		$tx_wecapi_list->init($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_wecapi_list.']);
+		list(,$setup) = $ts_parser->getVal('plugin.tx_wecapi_list',$GLOBALS['TSFE']->tmpl->setup);
+
+		$tx_wecapi_list->init($setup);
 		$tx_wecapi_list->cObj = $pObj;
 
 		return $tx_wecapi_list->getListContent($dataArray, $tableName);
