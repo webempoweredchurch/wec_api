@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2005 Web Empowered Church Team, Foundation For Evangelism (wec_sermons@webempoweredchurch.org)
+*  (c) 2007 Web Empowered Church Team, Foundation For Evangelism (wecapi@webempoweredchurch.org)
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -38,11 +38,11 @@
  *   63:     function init($conf)
  *   75:     function main( $content, $conf )
  *   88:     function getContent( &$pObj, $dataArray, $tableName )
- *  107:     function getListContent($dataArray, $tableName)
- *  188:     function getRowContent($tableName, $row, $rowTemplate, $markerArray)
- *  244:     function getTemplate()
- *  258:     function throwError( $type, $message, $detail = '' )
- *  282:     function getMarkerTagName( $name )
+ *  110:     function getListContent($dataArray, $tableName)
+ *  191:     function getRowContent($tableName, $row, $rowTemplate, $markerArray)
+ *  247:     function getTemplate()
+ *  261:     function throwError( $type, $message, $detail = '' )
+ *  285:     function getMarkerTagName( $name )
  *
  * TOTAL FUNCTIONS: 8
  * (This index is automatically created/updated by the extension "extdeveval")
@@ -122,7 +122,7 @@ class tx_wecapi_list extends tslib_cObj {
 
 				$processObject = &t3lib_div::getUserObj( $classRef, 'tx_' );
 
-				$processObject->preProcessPageArray( &$this, &$dataArray, &$pageArray );
+				$processObject->preProcessPageArray( $this, $dataArray, $pageArray );
 			}
 
 		}
@@ -140,7 +140,7 @@ class tx_wecapi_list extends tslib_cObj {
 
 				$processObject = &t3lib_div::getUserObj( $classRef, 'tx_' );
 
-				$processObject->preProcessItemArray( &$this, &$itemArray );
+				$processObject->preProcessItemArray( $this, $itemArray );
 			}
 
 		}
@@ -198,7 +198,7 @@ class tx_wecapi_list extends tslib_cObj {
 
 				$processObject = &t3lib_div::getUserObj( $classRef, 'tx_' );
 
-				$processObject->preProcessContentRow( &$this, &$row, $tableName );
+				$processObject->preProcessContentRow( $this, $row, $tableName );
 			}
 
 		}
