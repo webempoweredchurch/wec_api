@@ -39,10 +39,10 @@
  *   75:     function main( $content, $conf )
  *   88:     function getContent( &$pObj, $dataArray, $tableName )
  *  110:     function getListContent($dataArray, $tableName)
- *  191:     function getRowContent($tableName, $row, $rowTemplate, $markerArray)
- *  247:     function getTemplate()
- *  261:     function throwError( $type, $message, $detail = '' )
- *  285:     function getMarkerTagName( $name )
+ *  190:     function getRowContent($tableName, $row, $rowTemplate, $markerArray)
+ *  246:     function getTemplate()
+ *  260:     function throwError( $type, $message, $detail = '' )
+ *  284:     function getMarkerTagName( $name )
  *
  * TOTAL FUNCTIONS: 8
  * (This index is automatically created/updated by the extension "extdeveval")
@@ -112,10 +112,10 @@ class tx_wecapi_list extends tslib_cObj {
 		$content = '';
 		$template = $this->getTemplate();
 
-			//	Page mapping array
+		//	Page mapping array
 		$pageArray = $this->conf['pageArray.'];
 
-			// Hook for pre-processing the page marker array
+		// Hook for pre-processing the page marker array
 		if( is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['tx_wecapi_list']['preProcessPageArray'] ) ) {
 
 			foreach( $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['tx_wecapi_list']['preProcessPageArray'] as $classRef ) {
@@ -127,13 +127,12 @@ class tx_wecapi_list extends tslib_cObj {
 
 		}
 
-
-			// Process all the page array markers
+		// Process all the page array markers
 		$template = $this->getRowContent( $tableName, $pageArray, $template, $pageArray );
 
 		$itemArray = $this->conf['itemArray.'];
 
-			// Hook for pre-processing the item marker array
+		// Hook for pre-processing the item marker array
 		if( is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['tx_wecapi_list']['preProcessItemArray'] ) ) {
 
 			foreach( $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['tx_wecapi_list']['preProcessItemArray'] as $classRef ) {
@@ -145,7 +144,7 @@ class tx_wecapi_list extends tslib_cObj {
 
 		}
 
-			// Retrieve the ###ITEM### subpart
+		// Retrieve the ###ITEM### subpart
 		$itemTemplate = $this->local_cObj->getSubpart( $template, $this->getMarkerTagName('item') );
 
 		if( gettype( $dataArray ) == 'array' ) {
@@ -158,7 +157,7 @@ class tx_wecapi_list extends tslib_cObj {
 		}
 		else if( gettype( $dataArray ) == 'resource' ) {
 
-				//	Iterate every data item, aggregate the content
+			//	Iterate every data item, aggregate the content
 			while( $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res) ) {
 
 				$content .= $this->getRowContent( $tableName, $row, $itemTemplate, $itemArray );
@@ -174,7 +173,7 @@ class tx_wecapi_list extends tslib_cObj {
 				);
 		}
 
-			//	Return template content fully populated with data
+		//	Return template content fully populated with data
 		return $this->local_cObj->substituteSubpart( $template, $this->getMarkerTagName('item'), $content );
 
 	}
@@ -191,7 +190,7 @@ class tx_wecapi_list extends tslib_cObj {
 	function getRowContent($tableName, $row, $rowTemplate, $markerArray)
 	{
 
-			// Hook for pre-processing the row
+		// Hook for pre-processing the row
 		if( is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['tx_wecapi_list']['preProcessContentRow'] ) ) {
 
 			foreach( $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['tx_wecapi_list']['preProcessContentRow'] as $classRef ) {
@@ -217,7 +216,7 @@ class tx_wecapi_list extends tslib_cObj {
 		}
 		foreach( $markerArray as $marker => $value ) {
 
-				//	Only process if marker is not a typotag already
+			//	Only process if marker is not a typotag already
 			if( ! strrpos( $marker, '###') ) {
 
 				//	Set the key field for the CASE cObject, rendering the correct marker
@@ -246,7 +245,7 @@ class tx_wecapi_list extends tslib_cObj {
 	 */
 	function getTemplate() {
 
-			//	Read in the template content. Must have 'xmlFormat' specified in setup field, which determines the template that is read in.
+		//	Read in the template content. Must have 'xmlFormat' specified in setup field, which determines the template that is read in.
 		return $this->local_cObj->getSubpart( $this->local_cObj->fileResource( $this->conf['templateFile'] ), $this->getMarkerTagName('template_'.$this->conf['templateName']) );
 	}
 
@@ -283,7 +282,7 @@ class tx_wecapi_list extends tslib_cObj {
 	 * @return	string		A properly formatted marker tag
 	 */
 	function getMarkerTagName( $name ) {
-		//	Fix subpart name if TYPO tags were not inserted
+	//	Fix subpart name if TYPO tags were not inserted
 	return strrpos( $name, '###') ? strtoupper( $name ) :  '###'.strtoupper( $name ).'###';
 
 	}
