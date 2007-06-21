@@ -172,9 +172,9 @@ plugin.tx_wecapi_list {
 		item_comments =  TEXT
 		item_comments.value = 
 
+		# Enclosure url. For this tag, constants.wec.siteURL should be set to the root path to this site. The field enclosure_url is appended to this constant to form the absolute url.
 		item_enclosure = TEXT
-		item_enclosure.value = <enclosure url="{field:enclosure_url}" length="{field:size}" type="{field:mime_type}" />
-		item_enclosure.if.isTrue.field = enclosure_url
+		item_enclosure.value = <enclosure url="{$constants.wec.siteURL}{field:enclosure_url}" length="{field:size}" type="{field:mime_type}" />
 		item_enclosure.insertData = 1
 
 		item_pubdate = TEXT
