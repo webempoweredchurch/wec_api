@@ -176,6 +176,7 @@ plugin.tx_wecapi_list {
 		item_enclosure = TEXT
 		item_enclosure.value = <enclosure url="{$constants.wec.siteURL}{field:enclosure_url}" length="{field:size}" type="{field:mime_type}" />
 		item_enclosure.insertData = 1
+		item_enclosure.if.isTrue.field = enclosure_url 
 
 		item_pubdate = TEXT
 		item_pubdate.strftime = %a, %d %b %Y, %I:%M:%S %z
