@@ -163,7 +163,7 @@ plugin.tx_wecapi_list {
 		item_enclosure.if.isTrue.field = enclosure_url 
 
 		item_pubdate = TEXT
-		item_pubdate.strftime = %A, %d %b %Y %H:%M:%S %z
+		item_pubdate.strftime = %a, %d %b %Y %H:%M:%S %z
 		item_pubdate.wrap = <pubDate>|</pubDate>
 
 		item_guid = TEXT
