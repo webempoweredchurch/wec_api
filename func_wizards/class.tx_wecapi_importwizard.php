@@ -38,7 +38,7 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 	 * @return	array
 	 */
 	function modMenu()	{
-		return "Hello!";
+		return array("Hello!", "Hello");
 	}
 	
 	function main()	{
