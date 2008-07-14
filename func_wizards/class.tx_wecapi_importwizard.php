@@ -33,23 +33,22 @@ require_once(PATH_t3lib.'class.t3lib_extobjbase.php');
 class tx_wecapi_importwizard extends t3lib_extobjbase {
 	
 	function main()	{
-		$t3dFiles = $GLOBALS ['TYPO3_CONF_VARS']['EXTCONF']['wec_api']['t3dImport'];
+		$t3dImportSettings = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['wec_api']['t3dImport'];
 
 		$content = array();
 		
 		$gpVars = t3lib_div::_GP('tx_wecapi_importwizard');
 		if($importedKey = $gpVars['t3dImport']) {
-			$this->getT3DData($GLOBALS ['TYPO3_CONF_VARS']['EXTCONF']['wec_api']['t3dImport'][$importedKey], true);
+			$this->getT3DData($t3dImportSettings[$importedKey]['path'], true);
 			$content[] = '<div style="padding: 8px; background-color: #FFFF99">Import Successfull!</div>';
 		}
 		
-		if(is_array($t3dFiles)) {
+		if(is_array($t3dImportSettings)) {
 			$content[] = '<ul>';
-			foreach($t3dFiles as $key => $filename) {
-				if($data = $this->getT3DData($filename)) {
-
+			foreach($t3dImportSettings as $key => $settings) {
+				if($data = $this->getT3DData($settings['path'])) {
 					$content[] = '<li>';
-					$content[] = $this->renderT3D($key, $data);
+					$content[] = $this->renderT3D($key, $settings, $data);
 					$content[] = '</li>';
 				}
 			}
@@ -84,7 +83,7 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 		return $data;
 	}
 	
-	function renderT3D($key, $data) {
+	function renderT3D($key, $settings, $data) {
 		$content = array();
 		
 		if($data['header']['meta']['title']) {
@@ -94,10 +93,36 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 		}
 		$content[] = '<p>' . $data['header']['meta']['description'] . '</p>';
 		
-		$url = 'index.php?id=' . $this->pObj->id . '&tx_wecapi_importwizard[t3dImport]=' . $key;
-		$content[] = '<p><a style="text-decoration: underline" href="' . $url . '">Import Data</a></p>';
+		if($this->isImportAllowedOnPage($settings['allowOnStandardPages'])) {
+			$url = 'index.php?id=' . $this->pObj->id . '&tx_wecapi_importwizard[t3dImport]=' . $key;
+			$content[] = '<p><a style="text-decoration: underline" href="' . $url . '">Import Data</a></p>';
+		} else {
+			$content[] = '<p>Import is only allowed within SysFolders.</p>';
+		}
 		
 		return implode(chr(10), $content);
+	}
+	
+	function isImportAllowedOnPage($allowNormal = true) {
+		$page = t3lib_BEfunc::getRecord('pages', $this->pObj->id, 'doktype');
+		
+		switch($page['doktype']) {
+			case '1':
+				if($allowNormal) {
+					$importAllowed = true;
+				} else {
+					$importAllwoed = false;
+				}
+				break;
+			case '254':
+				$importAllowed = true;
+				break;
+			default:
+				$importAllowed = false;
+				break;
+		}
+		
+		return $importAllowed;
 	}
 }
 ?>
