@@ -43,17 +43,19 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 			$content[] = '<div style="padding: 8px; background-color: #FFFF99">Import Successfull!</div>';
 		}
 		
-		$content[] = '<ul>';
-		foreach($t3dFiles as $key => $filename) {
-			if($data = $this->getT3DData($filename)) {
-				
-				$content[] = '<li>';
-				$content[] = $this->renderT3D($key, $data);
-				$content[] = '</li>';
+		if(is_array($t3dFiles)) {
+			$content[] = '<ul>';
+			foreach($t3dFiles as $key => $filename) {
+				if($data = $this->getT3DData($filename)) {
+
+					$content[] = '<li>';
+					$content[] = $this->renderT3D($key, $data);
+					$content[] = '</li>';
+				}
 			}
+
+			$content[] = '</ul>';
 		}
-		
-		$content[] = '</ul>';
 		
 		return implode(chr(10), $content);
 	}
