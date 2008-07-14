@@ -32,17 +32,68 @@ require_once(PATH_t3lib.'class.t3lib_extobjbase.php');
 
 class tx_wecapi_importwizard extends t3lib_extobjbase {
 	
-	/**
-	 * Returns the menu array
-	 *
-	 * @return	array
-	 */
-	function modMenu()	{
-		return array("Hello!", "Hello");
+	function main()	{
+		$t3dFiles = $GLOBALS ['TYPO3_CONF_VARS']['EXTCONF']['wec_api']['t3dImport'];
+
+		$content = array();
+		
+		$gpVars = t3lib_div::_GP('tx_wecapi_importwizard');
+		if($importedKey = $gpVars['t3dImport']) {
+			$this->getT3DData($GLOBALS ['TYPO3_CONF_VARS']['EXTCONF']['wec_api']['t3dImport'][$importedKey], true);
+			$content[] = '<div style="padding: 8px; background-color: #FFFF99">Import Successfull!</div>';
+		}
+		
+		$content[] = '<ul>';
+		foreach($t3dFiles as $key => $filename) {
+			if($data = $this->getT3DData($filename)) {
+				
+				$content[] = '<li>';
+				$content[] = $this->renderT3D($key, $data);
+				$content[] = '</li>';
+			}
+		}
+		
+		$content[] = '</ul>';
+		
+		return implode(chr(10), $content);
 	}
 	
-	function main()	{
-		return "Hello!";
+	function getT3DData($filename, $doImport = false) {
+		$absFilename = t3lib_div::getFileAbsFileName($filename);
+		$data = null;
+		
+		if(@is_file($absFilename)) {
+			require_once(t3lib_extMgm::extPath('impexp').'class.tx_impexp.php');
+			$import = t3lib_div::makeInstance('tx_impexp');
+			$import->init(0,'import');
+			$import->enableLogging = TRUE;
+
+			if ($import->loadFile($absFilename, $doImport)) {
+				$data = $import->dat;
+				
+				if($doImport) {
+					$import->importData($this->pObj->id);
+				}
+			}
+		}
+		
+		return $data;
+	}
+	
+	function renderT3D($key, $data) {
+		$content = array();
+		
+		if($data['header']['meta']['title']) {
+			$content[] = '<h4>' . $data['header']['meta']['title'] . '</h4>';
+		} else {
+			$content[] = '<h4>' . $key . '</h4>';
+		}
+		$content[] = '<p>' . $data['header']['meta']['description'] . '</p>';
+		
+		$url = 'index.php?id=' . $this->pObj->id . '&tx_wecapi_importwizard[t3dImport]=' . $key;
+		$content[] = '<p><a style="text-decoration: underline" href="' . $url . '">Import Data</a></p>';
+		
+		return implode(chr(10), $content);
 	}
 }
 ?>

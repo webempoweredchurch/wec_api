@@ -12,8 +12,9 @@ if (TYPO3_MODE=='BE')	{
 		'web_func',
 		'tx_wecapi_importwizard',
 		t3lib_extMgm::extPath($_EXTKEY).'func_wizards/class.tx_wecapi_importwizard.php',
-		'Hello!',
+		'LLL:EXT:wec_api/locallang.xml:wiz_t3dimport',
 		'wiz'
 	);
 }
+
 ?>
