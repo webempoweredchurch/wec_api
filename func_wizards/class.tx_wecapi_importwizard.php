@@ -55,6 +55,8 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 			}
 
 			$content[] = '</ul>';
+		} else {
+			$content[] = '<p>No extension data is available for import.</p>';
 		}
 		
 		return implode(chr(10), $content);
