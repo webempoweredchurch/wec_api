@@ -116,14 +116,14 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 		$content = array();
 		switch ($mode) {
 			case WEC_API_FOLDER_ERROR:
-				$content[] = '<h2 style="border-bottom: dotted 1px black;">Page Error</h2>';
-				$content[] = '<p style="margin-bottom: 10px;">The data cannot be imported to normal pages, it needs to go into a SysFolder</p>';
+				$content[] = '<h2 style="border-bottom: dotted 1px black;">Page Type Error</h2>';
+				$content[] = '<p style="margin-bottom: 10px;">The data cannot be imported to normal pages and is only allowed in a SysFolder.</p>';
 				$content[] = $import;
 				$content[] = '<div style="margin-bottom: 20px;"></div>';
 				break;
 
 			case WEC_API_DUPLICATE:
-				$content[] = '<h2 style="border-bottom: dotted 1px black;">Duplication</h2>';
+				$content[] = '<h2 style="border-bottom: dotted 1px black;">Previously Imported</h2>';
 				$content[] = '<p style="margin-bottom: 10px;">The data has already been imported to this page before, but you can import it again if you like.</p>';
 				$content[] = $import;
 				$content[] = '<div style="margin-bottom: 20px;"></div>';
@@ -132,7 +132,7 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 			case WEC_API_CLEAR:
 			default:
 				$content[] = '<h2 style="border-bottom: dotted 1px black;">Available Imports</h2>';
-				$content[] = '<p style="margin-bottom: 10px;">Select "Import Data" to import the data into this page.</p>';
+				$content[] = '<p style="margin-bottom: 10px;">Select "Import Data" to import the data into this page. Pay special attention to the descriptions, which will explain what records you are actually importing.</p>';
 				$content[] = $import;
 				$content[] = '<div style="margin-bottom: 20px;"></div>';
 				break;
@@ -152,7 +152,9 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 		$content[] = '<p>' . $data['header']['meta']['description'] . '</p>';
 		
 		$url = 'index.php?id=' . $this->pObj->id . '&tx_wecapi_importwizard[t3dImport]=' . $key;
-		$content[] = '<p><a style="text-decoration: underline" href="' . $url . '">Import Data</a></p>';
+		$icon = '<img src="' . $GLOBALS['BACK_PATH'] . t3lib_extMgm::extRelPath('wec_api') . 'func_wizards/brick_go.png" />';
+
+		$content[] = '<p style="margin-top: 5px;"><a href="' . $url . '">' . $icon . '<span style="vertical-align: top; text-decoration: underline; margin-left: 4px;">Import Data</span></a></p>';
 
 		return implode(chr(10), $content);
 	}
