@@ -27,6 +27,10 @@
 * This copyright notice MUST APPEAR in all copies of the file!
 ***************************************************************/
 
+define('WEC_API_CLEAR', 0);
+define('WEC_API_DUPLICATE', 1);
+define('WEC_API_FOLDER_ERROR', 2);
+
 
 require_once(PATH_t3lib.'class.t3lib_extobjbase.php');
 
@@ -43,17 +47,38 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 			$content[] = '<div style="padding: 8px; background-color: #FFFF99">Import Successful!</div>';
 		}
 		
+		$imports = array(
+			WEC_API_CLEAR => array(),
+			WEC_API_DUPLICATE => array(),
+			WEC_API_FOLDER_ERROR => array()
+		);
+		
 		if(is_array($t3dImportSettings)) {
-			$content[] = '<ul>';
 			foreach($t3dImportSettings as $key => $settings) {
+
 				if($data = $this->getT3DData($settings['path'])) {
-					$content[] = '<li>';
-					$content[] = $this->renderT3D($key, $settings, $data);
-					$content[] = '</li>';
+					
+					if(!$this->isImportAllowedOnPage($settings['allowOnStandardPages'])) {
+						$imports[WEC_API_FOLDER_ERROR][$key] = $settings;
+					} else if($this->hasPriorImportOnPage($this->pObj->id, $key)) {
+						$imports[WEC_API_DUPLICATE][$key] = $settings;
+					} else {
+						$imports[WEC_API_CLEAR][$key] = $settings;
+					} 
+					
+
 				}
 			}
 
-			$content[] = '</ul>';
+			foreach( $imports as $mode => $import ) {
+				$importsForThisMode = array();
+				foreach( $import as $key => $settings ) {
+					$importsForThisMode[] = $this->renderT3D($key, $settings, $data);
+				}
+				$content[] = $this->renderMode($mode, $importsForThisMode);
+
+			}
+
 		} else {
 			$content[] = '<p>No extension data is available for import.</p>';
 		}
@@ -83,6 +108,39 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 		return $data;
 	}
 	
+	function renderMode($mode, $imports) {
+		if(empty($imports)) return null;
+		
+		$import = implode(chr(10), $imports);
+		
+		$content = array();
+		switch ($mode) {
+			case WEC_API_FOLDER_ERROR:
+				$content[] = '<h2 style="border-bottom: dotted 1px black;">Page Error</h2>';
+				$content[] = '<p style="margin-bottom: 10px;">The data cannot be imported to normal pages, it needs to go into a SysFolder</p>';
+				$content[] = $import;
+				$content[] = '<div style="margin-bottom: 20px;"></div>';
+				break;
+
+			case WEC_API_DUPLICATE:
+				$content[] = '<h2 style="border-bottom: dotted 1px black;">Duplication</h2>';
+				$content[] = '<p style="margin-bottom: 10px;">The data has already been imported to this page before, but you can import it again if you like.</p>';
+				$content[] = $import;
+				$content[] = '<div style="margin-bottom: 20px;"></div>';
+				break;
+
+			case WEC_API_CLEAR:
+			default:
+				$content[] = '<h2 style="border-bottom: dotted 1px black;">Available Imports</h2>';
+				$content[] = '<p style="margin-bottom: 10px;">Select "Import Data" to import the data into this page.</p>';
+				$content[] = $import;
+				$content[] = '<div style="margin-bottom: 20px;"></div>';
+				break;
+		}
+		return implode(chr(10), $content);
+	}
+	
+	
 	function renderT3D($key, $settings, $data) {
 		$content = array();
 		
@@ -93,17 +151,9 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 		}
 		$content[] = '<p>' . $data['header']['meta']['description'] . '</p>';
 		
-		if($this->isImportAllowedOnPage($settings['allowOnStandardPages'])) {
-			$url = 'index.php?id=' . $this->pObj->id . '&tx_wecapi_importwizard[t3dImport]=' . $key;
-			$content[] = '<p><a style="text-decoration: underline" href="' . $url . '">Import Data</a></p>';
+		$url = 'index.php?id=' . $this->pObj->id . '&tx_wecapi_importwizard[t3dImport]=' . $key;
+		$content[] = '<p><a style="text-decoration: underline" href="' . $url . '">Import Data</a></p>';
 
-			if($this->hasPriorImportOnPage($this->pObj->id, $key)) {
-				$content[] = "Already there!";
-			}
-		} else {
-			$content[] = '<p>Import is only allowed within SysFolders.</p>';
-		}
-		
 		return implode(chr(10), $content);
 	}
 	
@@ -112,6 +162,8 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 		
 		switch($page['doktype']) {
 			case '1':
+			case '2':
+			case '5':
 				if($allowNormal) {
 					$importAllowed = true;
 				} else {
