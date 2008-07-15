@@ -59,26 +59,27 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 				if($data = $this->getT3DData($settings['path'])) {
 					
 					if(!$this->isImportAllowedOnPage($settings['allowOnStandardPages'])) {
-						$imports[WEC_API_FOLDER_ERROR][$key] = $settings;
+						$imports[WEC_API_FOLDER_ERROR][$key]['settings'] = $settings;
+						$imports[WEC_API_FOLDER_ERROR][$key]['data'] = $data;
 					} else if($this->hasPriorImportOnPage($this->pObj->id, $key)) {
-						$imports[WEC_API_DUPLICATE][$key] = $settings;
+						$imports[WEC_API_DUPLICATE][$key]['settings'] = $settings;
+						$imports[WEC_API_DUPLICATE][$key]['data'] = $data;
 					} else {
-						$imports[WEC_API_CLEAR][$key] = $settings;
+						$imports[WEC_API_CLEAR][$key] ['settings']= $settings;
+						$imports[WEC_API_CLEAR][$key]['data'] = $data;
 					} 
-					
-
 				}
 			}
-
+			
 			foreach( $imports as $mode => $import ) {
 				$importsForThisMode = array();
-				foreach( $import as $key => $settings ) {
+				foreach( $import as $key => $value ) {
+					$settings = $value['settings'];
+					$data = $value['data'];
 					$importsForThisMode[] = $this->renderT3D($key, $settings, $data);
 				}
 				$content[] = $this->renderMode($mode, $importsForThisMode);
-
 			}
-
 		} else {
 			$content[] = '<p>No extension data is available for import.</p>';
 		}
