@@ -40,7 +40,7 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 		if($importedKey = $gpVars['t3dImport']) {
 			$this->getT3DData($t3dImportSettings[$importedKey]['path'], true);
 			$this->saveImportIndicator($this->pObj->id, $importedKey);
-			$content[] = '<div style="padding: 8px; background-color: #FFFF99">Import Successfull!</div>';
+			$content[] = '<div style="padding: 8px; background-color: #FFFF99">Import Successful!</div>';
 		}
 		
 		if(is_array($t3dImportSettings)) {
