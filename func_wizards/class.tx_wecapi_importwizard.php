@@ -34,8 +34,6 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 	
 	function main()	{
 		$t3dImportSettings = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['wec_api']['t3dImport'];
-// TODO: debug
-t3lib_div::debug($t3dImportSettings);
 		$content = array();
 		
 		$gpVars = t3lib_div::_GP('tx_wecapi_importwizard');
@@ -98,9 +96,8 @@ t3lib_div::debug($t3dImportSettings);
 		if($this->isImportAllowedOnPage($settings['allowOnStandardPages'])) {
 			$url = 'index.php?id=' . $this->pObj->id . '&tx_wecapi_importwizard[t3dImport]=' . $key;
 			$content[] = '<p><a style="text-decoration: underline" href="' . $url . '">Import Data</a></p>';
-			// TODO: debug
-			t3lib_div::debug($settings);
-			if(array_key_exists('pid', $settings) && !empty($settings['pid'])) {
+
+			if($this->hasPriorImportOnPage($this->pObj->id, $key)) {
 				$content[] = "Already there!";
 			}
 		} else {
@@ -132,11 +129,13 @@ t3lib_div::debug($t3dImportSettings);
 		return $importAllowed;
 	}
 	
-	function saveImportIndicator($pid, $extKey) {
-		global $TYPO3_CONF_VARS;
-
-		$extConf = $TYPO3_CONF_VARS['EXTCONF']['wec_api']['t3dImport'][$extKey];
-		$extConf['pid'] = $pid;
+	function saveImportIndicator($pid, $key) {
+		$extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['wec_api']['t3dImport'][$key]);
+		if($extConf['pid']) {
+			$extConf['pid'] .= ','.$pid;
+		} else {
+			$extConf['pid'] = $pid;
+		}
 
 		// Instance of install tool
 		$instObj = t3lib_div::makeInstance('t3lib_install');
@@ -145,11 +144,22 @@ t3lib_div::debug($t3dImportSettings);
 
 		// Get lines from localconf file
 		$lines = $instObj->writeToLocalconf_control();
-		// t3lib_div::debug($lines, 'lines');
-		$instObj->setValueInLocalconfFile($lines, '$TYPO3_CONF_VARS[\'EXTCONF\'][\'wec_api\'][\'t3dImport\'][\''.$extKey.'\']', serialize($extConf));
+		$instObj->setValueInLocalconfFile($lines, '$TYPO3_CONF_VARS[\'EXT\'][\'extConf\'][\'wec_api\'][\'t3dImport\'][\''.$key.'\']', serialize($extConf));
 		$instObj->writeToLocalconf_control($lines);
 		
-		$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['wec_api']['t3dImport'][$extKey]['pid'] = $pid;
+		$GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['wec_api']['t3dImport'][$key] = serialize($extConf);
+	}
+	
+	function hasPriorImportOnPage($pid, $key) {
+		$extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['wec_api']['t3dImport'][$key]);
+
+		if(t3lib_div::inList($extConf['pid'], $pid)) {
+			$hasPrior = true;
+		} else {
+			$hasPrior = false;
+		}
+		
+		return $hasPrior;
 	}
 }
 ?>
