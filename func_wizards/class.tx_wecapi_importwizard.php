@@ -34,12 +34,14 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 	
 	function main()	{
 		$t3dImportSettings = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['wec_api']['t3dImport'];
-
+// TODO: debug
+t3lib_div::debug($t3dImportSettings);
 		$content = array();
 		
 		$gpVars = t3lib_div::_GP('tx_wecapi_importwizard');
 		if($importedKey = $gpVars['t3dImport']) {
 			$this->getT3DData($t3dImportSettings[$importedKey]['path'], true);
+			$this->saveImportIndicator($this->pObj->id, $importedKey);
 			$content[] = '<div style="padding: 8px; background-color: #FFFF99">Import Successfull!</div>';
 		}
 		
@@ -96,6 +98,11 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 		if($this->isImportAllowedOnPage($settings['allowOnStandardPages'])) {
 			$url = 'index.php?id=' . $this->pObj->id . '&tx_wecapi_importwizard[t3dImport]=' . $key;
 			$content[] = '<p><a style="text-decoration: underline" href="' . $url . '">Import Data</a></p>';
+			// TODO: debug
+			t3lib_div::debug($settings);
+			if(array_key_exists('pid', $settings) && !empty($settings['pid'])) {
+				$content[] = "Already there!";
+			}
 		} else {
 			$content[] = '<p>Import is only allowed within SysFolders.</p>';
 		}
@@ -123,6 +130,26 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 		}
 		
 		return $importAllowed;
+	}
+	
+	function saveImportIndicator($pid, $extKey) {
+		global $TYPO3_CONF_VARS;
+
+		$extConf = $TYPO3_CONF_VARS['EXTCONF']['wec_api']['t3dImport'][$extKey];
+		$extConf['pid'] = $pid;
+
+		// Instance of install tool
+		$instObj = t3lib_div::makeInstance('t3lib_install');
+		$instObj->allowUpdateLocalConf = 1;
+		$instObj->updateIdentity = 'WEC API T3D importer';
+
+		// Get lines from localconf file
+		$lines = $instObj->writeToLocalconf_control();
+		// t3lib_div::debug($lines, 'lines');
+		$instObj->setValueInLocalconfFile($lines, '$TYPO3_CONF_VARS[\'EXTCONF\'][\'wec_api\'][\'t3dImport\'][\''.$extKey.'\']', serialize($extConf));
+		$instObj->writeToLocalconf_control($lines);
+		
+		$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['wec_api']['t3dImport'][$extKey]['pid'] = $pid;
 	}
 }
 ?>
