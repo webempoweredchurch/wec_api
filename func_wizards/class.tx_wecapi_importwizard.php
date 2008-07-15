@@ -163,22 +163,14 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 	function isImportAllowedOnPage($allowNormal = true) {
 		$page = t3lib_BEfunc::getRecord('pages', $this->pObj->id, 'doktype');
 		
-		switch($page['doktype']) {
-			case '1':
-			case '2':
-			case '5':
-				if($allowNormal) {
-					$importAllowed = true;
-				} else {
-					$importAllwoed = false;
-				}
-				break;
-			case '254':
+		if($allowNormal) {
+			$importAllowed = true;
+		} else {
+			if($page['doktype'] == 254) {
 				$importAllowed = true;
-				break;
-			default:
+			} else {
 				$importAllowed = false;
-				break;
+			}
 		}
 		
 		return $importAllowed;
