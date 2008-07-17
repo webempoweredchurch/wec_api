@@ -155,7 +155,7 @@ class tx_wecapi_importwizard extends t3lib_extobjbase {
 		$url = 'index.php?id=' . $this->pObj->id . '&tx_wecapi_importwizard[t3dImport]=' . $key;
 		$icon = '<img src="' . $GLOBALS['BACK_PATH'] . t3lib_extMgm::extRelPath('wec_api') . 'func_wizards/brick_go.png" />';
 
-		$content[] = '<p style="margin-top: 5px;"><a href="' . $url . '">' . $icon . '<span style="vertical-align: top; text-decoration: underline; margin-left: 4px;">Import Data</span></a></p>';
+		$content[] = '<p style="margin-top: 5px; margin-bottom: 10px;"><a href="' . $url . '">' . $icon . '<span style="vertical-align: top; text-decoration: underline; margin-left: 4px;">Import Data</span></a></p>';
 
 		return implode(chr(10), $content);
 	}
