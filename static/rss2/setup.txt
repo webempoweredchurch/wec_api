@@ -83,6 +83,7 @@ plugin.tx_wecapi_list {
 		#	You must use the hook tx_wecapi_list.php:preProcessPageArray to set the field channel_link
 		channel_link = TEXT
 		channel_link.field = channel_link
+		channel_link.htmlSpecialChars = 1
 		channel_link.wrap = <link>|</link>
 
 		channel_description = TEXT
