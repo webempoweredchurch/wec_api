@@ -157,11 +157,15 @@ plugin.tx_wecapi_list {
 		item_comments =  TEXT
 		item_comments.value =
 
-		# Enclosure url. For this tag, constants.wec.siteURL should be set to the root path to this site. The field enclosure_url is appended to this constant to form the absolute url.
+		# Enclosure url.
 		item_enclosure = TEXT
-		item_enclosure.value = <enclosure url="{$constants.wec.siteURL}{field:enclosure_url}" length="{field:size}" type="{field:mime_type}" />
-		item_enclosure.insertData = 1
-		item_enclosure.if.isTrue.field = enclosure_url 
+		item_enclosure {
+			typolink.parameter = {field : enclosure_url}
+			typolink.parameter.insertData = 1
+			typolink.returnLast = url
+			dataWrap= <enclosure url="|" length="{field:size}" type="{field:mime_type}" />
+			if.isTrue.field = enclosure_url 
+		}
 
 		item_pubdate = TEXT
 		item_pubdate.strftime = %a, %d %b %Y %H:%M:%S %z
@@ -191,7 +195,13 @@ plugin.tx_wecapi_list {
 		}
 
 		itunes_image = TEXT
-		itunes_image.dataWrap=<itunes:image href="{$plugin.tx_wecapi_list.xml.rss.image}"/>
+		itunes_image {
+			typolink.parameter = {$plugin.tx_wecapi_list.xml.rss.image}
+			typolink.returnLast = url
+			dataWrap = <itunes:image href="|"/>
+			if.isTrue = {$plugin.tx_wecapi_list.xml.rss.image}
+			if.isTrue.insertData = 1
+		}
 
 		itunes_explicit = TEXT
 		itunes_explicit.value = no
@@ -223,6 +233,8 @@ plugin.tx_wecapi_list {
 	# Making a copy of this at global scope will allow you to output the XML template only
 	rss2 = PAGE
 	rss2.config {
+		# @todo	Make this work with constants.wec.siteURL also
+		absRefPrefix = {$siteURL}
 		disableAllHeaderCode = 1
 		additionalHeaders = Content-type:application/xml
 		xhtml_cleaning = 0
