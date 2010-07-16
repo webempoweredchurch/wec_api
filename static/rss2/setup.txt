@@ -114,9 +114,18 @@ plugin.tx_wecapi_list {
 		managing_editor.wrap = <managingEditor>|</managingEditor>
 
 		#	E-mail address of the webmaster
-		webmaster = TEXT
-		webmaster.value = {$constants.wec.adminEmail}
-		webmaster.wrap = <webMaster>|</webMaster>
+		webmaster = COA
+		webmaster {
+			10 = TEXT
+			10.value = {$plugin.tx_wecapi_list.xml.rss.owner_email}
+
+			20 = TEXT
+			20.value = {$plugin.tx_wecapi_list.xml.rss.owner_name}
+			20.noTrimWrap = | (|)|
+			20.if.isTrue = {$plugin.tx_wecapi_list.xml.rss.owner_name}
+
+			wrap = <webMaster>|</webMaster>
+		}
 
 		ttl = TEXT
 		ttl {
