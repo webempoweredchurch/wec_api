@@ -11,7 +11,7 @@ plugin.tx_wecapi_list {
 	xml.rss.image = 
 
 	# cat=plugin.tx_wecapi_list/other/1; type=string; label= Generator: The proud generator of an XML feed
-	xml.rss.generator = TYPO3 v4.0.0 CMS
+	xml.rss.generator = TYPO3 + WEC Sermon Management System
 
 	# See http://www.w3.org/TR/REC-xml-names/
 	# cat=plugin.tx_wecapi_list/other/5; type=string; label= Namespace Name: a URI reference, being the namespace name identifying the namespace
@@ -20,13 +20,13 @@ plugin.tx_wecapi_list {
 	# cat=plugin.tx_wecapi_list/other/10; type=string; label= Channel Title: The name of the channel. It's how people refer to your service
 	xml.rss.channel_title = Syndicated Sermons
 	
-	# cat=plugin.tx_wecapi_list/other/15; type=string; label= Channel Description: This description is shown in a separate window that appears when the “circled i" in the Description column is clicked. It also appears on the iTunes page for your podcast. This field can be up to 4000 characters.
+	# cat=plugin.tx_wecapi_list/other/15; type=string; label= Channel Description: This description is shown in a separate window that appears when the Ã¬circled i" in the Description column is clicked. It also appears on the iTunes page for your podcast. This field can be up to 4000 characters.
 	xml.rss.channel_descr = Our syndicated sermons feed
 
 	# cat=plugin.tx_wecapi_list/other/17; type=string; label= Keywords: Keywords allowing users to search on a maximum of 12 text keywords. Use commas to separate keywords.
 	xml.rss.keywords = God,Jesus,Holy,Spirit
 	
-	# cat=plugin.tx_wecapi_list/other/16; type=string; label= iTunes Channel Summary: This description is shown in a separate window that appears when the “circled i" in the Description column is clicked. It also appears on the iTunes page for your podcast. This field can be up to 4000 characters.
+	# cat=plugin.tx_wecapi_list/other/16; type=string; label= iTunes Channel Summary: This description is shown in a separate window that appears when the Ã¬circled i" in the Description column is clicked. It also appears on the iTunes page for your podcast. This field can be up to 4000 characters.
 	xml.rss.itunes_summary = A weekly message from our church
 	
 	# cat=plugin.tx_wecapi_list/other/20; type=string; label= iTunes Channel Category: Specify an iTunes category listed at http://www.apple.com/itunes/podcasts/techspecs.html#_Toc526931698

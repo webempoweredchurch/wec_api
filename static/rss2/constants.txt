@@ -14,7 +14,7 @@ plugin.tx_wecapi_list {
 	xml.rss.image.title =
 	
 	# cat=plugin.tx_wecapi_list/other/1; type=string; label= Generator: The proud generator of an XML feed
-	xml.rss.generator = TYPO3 v4.0.0 CMS
+	xml.rss.generator = TYPO3 + WEC Sermon Management System
 
 	# See http://www.w3.org/TR/REC-xml-names/
 	# cat=plugin.tx_wecapi_list/other/5; type=string; label= Namespace Name: a URI reference, being the namespace name identifying the namespace
