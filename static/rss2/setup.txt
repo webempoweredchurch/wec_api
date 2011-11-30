@@ -15,7 +15,7 @@ plugin.tx_wecapi_list {
 	templateName = {$plugin.tx_wecapi_list.templateName}
 
 	#	We specify two  arrays here in TypoScript. These one dimentional arrays are iterated, each key having an identically named counterpart in 'tag_rendering' below.
-	
+
 	# Array pageArray is used to map marker tags outside of the ITEM subpart.
 	pageArray {
 		generator =
@@ -34,7 +34,7 @@ plugin.tx_wecapi_list {
 		managing_editor =
 		webmaster =
 		ttl =
-		channel_image = 
+		channel_image =
 	}
 
 	# Array itemArray is used to map marker tags within the ITEM subpart of the template.
@@ -75,7 +75,7 @@ plugin.tx_wecapi_list {
 			wrap = |
 			if.isTrue = {$plugin.tx_wecapi_list.xml.rss.xmlns}
 		}
-		
+
 		channel_title  = TEXT
 		channel_title.value = {$plugin.tx_wecapi_list.xml.rss.channel_title}
 		channel_title.wrap = <title>|</title>
@@ -133,7 +133,7 @@ plugin.tx_wecapi_list {
 			wrap = <ttl>|</ttl>
 			if.isTrue = {$plugin.tx_wecapi_list.xml.rss.ttl}
 		}
-		
+
 		channel_image = COA
 		channel_image {
 			wrap=<image>|</image>
@@ -141,7 +141,7 @@ plugin.tx_wecapi_list {
 			10 = TEXT
 			10.value ={$plugin.tx_wecapi_list.xml.rss.image.title}
 			10.wrap = <title>|</title>
-			
+
 			20 = TEXT
 			20.value = {$plugin.tx_wecapi_list.xml.rss.image}
 			20.wrap = <url>|</url>
@@ -169,18 +169,18 @@ plugin.tx_wecapi_list {
 		item_link.field = item_link
 		item_link.wrap = <link>|</link>
 
-		item_description = TEXT 
+		item_description = TEXT
 		item_description.wrap = <description>|</description>
 		item_description.crop = 200|...|2
 
 		item_author = TEXT
-		item_author.value = 
+		item_author.value =
 
 		# Assumed here that all articles will be categorized the same as the channel
 		item_category < .channel_category
 
 		item_comments =  TEXT
-		item_comments.value = 
+		item_comments.value =
 
 		# Enclosure url.
 		item_enclosure = TEXT
@@ -189,7 +189,7 @@ plugin.tx_wecapi_list {
 			typolink.parameter.insertData = 1
 			typolink.returnLast = url
 			dataWrap= <enclosure url="|" length="{field:size}" type="{field:mime_type}" />
-			if.isTrue.field = enclosure_url 
+			if.isTrue.field = enclosure_url
 		}
 
 		item_pubdate = TEXT
@@ -203,8 +203,8 @@ plugin.tx_wecapi_list {
 		item_source = TEXT
 		item_source = {$constants.wec.xml.rss.channel_title}
 		item_source.dataWrap = <source url="{field:item_link}">|</source>
-		
-		namespace_entries = COA 
+
+		namespace_entries = COA
 		namespace_entries {
 			10 = TEXT
 			10 {
@@ -218,7 +218,6 @@ plugin.tx_wecapi_list {
 	# Making a copy of this at global scope will allow you to output the XML template only
 	rss2 = PAGE
 	rss2.config {
-		# @todo	Make this work with constants.wec.siteURL also
 		absRefPrefix = {$siteURL}
 		disableAllHeaderCode = 1
 		additionalHeaders = Content-type:application/xml
@@ -227,4 +226,11 @@ plugin.tx_wecapi_list {
 	}
 
 }
+
+[globalString = LIT:{$siteURL} = http*]
+	# If the site URL is not set, try constants.wec.siteURL
+[else]
+	plugin.tx_wecapi_list.rss2.config.absRefPrefix = {$constants.wec.siteURL}
+[end]
+
 
